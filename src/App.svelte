@@ -14,6 +14,7 @@
     </a>
   </div>
   <h1>Vite + Svelte</h1>
+  <p>Test edit</p>
 
   <div class="card">
     <Counter />
