@@ -1,36 +1,42 @@
 <script>
-  function make2DArray(cols, rows) {
-    let arr = new Array(cols);
-    for (let i = 0; i < arr.length; i++) {
-      arr[i] = new Array(rows);
-    }
-    return arr;
-  }
+  import { make2DArray } from "./lib/unit-chart-util.js";
+  // --------------------------------------------------------------
+  // SET UP UNIT CHART
+  // --------------------------------------------------------------
 
-  let grid = make2DArray(10, 10);
+  // DIMENSIONS
+  let numRows = 10;
+  let numCols = 10;
+  let unitHeight = 20;
+  let unitWidth = 20;
+  let gutter = 6;
 
-  let numCells = 50;
-  let cellsVisible = 0;
+  // DATA STRUCTURE
+  let grid = make2DArray(numRows, numCols);
 
+  // --------------------------------------------------------------
+  // UPDATE NUMBER OF UNIT CELLS WHICH ARE FILLED
+  // --------------------------------------------------------------
+  let numCells = 50; // initial number of cells to fill
+
+  // EACH TIME THE NUMBER OF FILLED CELLS IS UPDATED
   $: {
-    // start from bottom of array
+    // reset the count of cells that are filled
+    let countFilledCells = 0;
+
+    // loop over 2d grid from the bottom row
     for (let i = grid.length - 1; i >= 0; i--) {
       let row = grid[i];
       for (let j = 0; j < row.length; j++) {
-        if (cellsVisible < +numCells) {
+        if (countFilledCells < +numCells) {
           grid[i][j] = true;
-          cellsVisible++;
+          countFilledCells++;
         } else {
           grid[i][j] = false;
         }
       }
     }
-    cellsVisible = 0;
   }
-
-  let unitHeight = 20;
-  let unitWidth = 20;
-  let gutter = 6;
 </script>
 
 <main>
@@ -41,16 +47,16 @@
     {#each grid as row, i}
       {#each row as cell, j}
         <!-- {#if grid[i][j]} -->
-          <rect
-            class={grid[i][j] ? "unit filled" : "unit empty"}
-            width={unitWidth}
-            height={unitHeight}
-            x={j * (unitWidth + gutter) + gutter / 2}
-            y={i * (unitHeight + gutter) + gutter / 2}
-            stroke={grid[i][j] ? "white" : "black"}
-            stroke-width={grid[i][j] ? 0 : 1}
-            fill={grid[i][j] ? "black" : "white"}
-          />
+        <rect
+          class={grid[i][j] ? "unit filled" : "unit empty"}
+          width={unitWidth}
+          height={unitHeight}
+          x={j * (unitWidth + gutter) + gutter / 2}
+          y={i * (unitHeight + gutter) + gutter / 2}
+          stroke={grid[i][j] ? "white" : "black"}
+          stroke-width={grid[i][j] ? 0 : 1}
+          fill={grid[i][j] ? "black" : "white"}
+        />
         <!-- {/if} -->
         <!-- reference grid -->
         <!-- <rect
@@ -73,7 +79,7 @@
   .unit.filled {
     fill: black;
   } */
-  .unit{
+  .unit {
     transition-property: fill stroke;
     transition: 1s cubic-bezier(0.5, 1, 0.5, 1);
   }
