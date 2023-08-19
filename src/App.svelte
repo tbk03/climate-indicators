@@ -13,6 +13,7 @@
   let cellsVisible = 0;
 
   $: {
+    // start from bottom of array
     for (let i = grid.length - 1; i >= 0; i--) {
       let row = grid[i];
       for (let j = 0; j < row.length; j++) {
@@ -26,8 +27,10 @@
     }
     cellsVisible = 0;
   }
-  // start from bottom of array
 
+  let unitHeight = 20;
+  let unitWidth = 20;
+  let gutter = 6;
 </script>
 
 <main>
@@ -37,13 +40,41 @@
   <svg height="400" width="400">
     {#each grid as row, i}
       {#each row as cell, j}
-        {#if grid[i][j]}
-          <rect width="10" height="10" x={j * 11} y={i * 11} />
-        {/if}
+        <!-- {#if grid[i][j]} -->
+          <rect
+            class={grid[i][j] ? "unit filled" : "unit empty"}
+            width={unitWidth}
+            height={unitHeight}
+            x={j * (unitWidth + gutter) + gutter / 2}
+            y={i * (unitHeight + gutter) + gutter / 2}
+            stroke={grid[i][j] ? "white" : "black"}
+            stroke-width={grid[i][j] ? 0 : 1}
+            fill={grid[i][j] ? "black" : "white"}
+          />
+        <!-- {/if} -->
+        <!-- reference grid -->
+        <!-- <rect
+          width={unitWidth + gutter}
+          height={unitHeight + gutter}
+          x={j * (unitWidth + gutter)}
+          y={i * (unitHeight + gutter)}
+          fill="none"
+          stroke="black"
+        /> -->
       {/each}
     {/each}
   </svg>
 </main>
 
 <style>
+  /* .unit.empty {
+    fill: white;
+  }
+  .unit.filled {
+    fill: black;
+  } */
+  .unit{
+    transition-property: fill stroke;
+    transition: 1s cubic-bezier(0.5, 1, 0.5, 1);
+  }
 </style>
