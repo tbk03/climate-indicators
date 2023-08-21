@@ -3,18 +3,31 @@
 
   export let numFilledCells;
 
-    // --------------------------------------------------------------
+  // --------------------------------------------------------------
   // SET UP UNIT CHART
   // --------------------------------------------------------------
+
+  // DIMENSIONS
   let numRows = 10;
   let numCols = 10;
-
-  // DATA STRUCTURE
-  let grid = make2DArray(numRows, numCols);
   let unitHeight = 20;
   let unitWidth = 20;
   let gutter = 6;
 
+  // DATA STRUCTURE
+  let grid = make2DArray(numRows, numCols);
+
+  // --------------------------------------------------------------
+  // MAKE CHART RESPONSIVE
+  // --------------------------------------------------------------
+  let chartWidth = 800;
+  
+  $: {
+    unitWidth = (chartWidth / numCols) - gutter;
+    unitHeight = unitWidth;
+
+    console.log({chartWidth, unitWidth});
+  }
   // --------------------------------------------------------------
   // UPDATE NUMBER OF UNIT CELLS WHICH ARE FILLED
   // --------------------------------------------------------------
@@ -40,19 +53,11 @@
 </script>
 
 <div class="waffle-title">
-  <h1>How much of the GHG budget was left?</h1>
+  <h1>In 19.. {numFilledCells}% GHG budget was left</h1>
 </div>
-<div class="waffle-container">
-  <div class="waffle-desc">
-    <h2>In 19..</h2>
-    <!-- {#key numFilledCells} -->
-    <h1 class="waffle-percent">{numFilledCells}%</h1>
-    <!-- {/key} -->
-    <h2>remaining</h2>
-  </div>
-
-  <div class="waffle">
-    <svg height="400" width="400">
+<div class="waffle-container" >
+  <div class="waffle" bind:clientWidth={chartWidth}>
+    <svg height={chartWidth} width={chartWidth}>
       {#each grid as row, i}
         {#each row as cell, j}
           <rect
@@ -74,10 +79,8 @@
 <style>
   /* CONTAINERS */
   .waffle-container {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
+    
+
   }
 
   /* WAFFLE TITLE */
@@ -86,13 +89,11 @@
   }
 
   /* WAFFLE DESCRIPTION */
-  .waffle-desc {
-    max-width: 200px;
-  }
 
   /* WAFFLE CHART */
   .waffle {
-    /* flex-grow: 1; */
+    margin: 0 auto;
+    max-width: 600px;
   }
   .unit {
     transition-property: fill stroke;
