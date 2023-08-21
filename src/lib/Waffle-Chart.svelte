@@ -1,9 +1,19 @@
 <script>
-  export let grid;
-  export let unitWidth;
-  export let unitHeight;
-  export let gutter;
+  import { make2DArray } from "./unit-chart-util.js";
+
   export let numFilledCells;
+
+    // --------------------------------------------------------------
+  // SET UP UNIT CHART
+  // --------------------------------------------------------------
+  let numRows = 10;
+  let numCols = 10;
+
+  // DATA STRUCTURE
+  let grid = make2DArray(numRows, numCols);
+  let unitHeight = 20;
+  let unitWidth = 20;
+  let gutter = 6;
 
   // --------------------------------------------------------------
   // UPDATE NUMBER OF UNIT CELLS WHICH ARE FILLED
@@ -29,14 +39,16 @@
   }
 </script>
 
+<div class="waffle-title">
+  <h1>How much of the GHG budget was left?</h1>
+</div>
 <div class="waffle-container">
   <div class="waffle-desc">
     <h2>In 19..</h2>
     <!-- {#key numFilledCells} -->
-        <h1 class="waffle-percent">{numFilledCells}%</h1>
+    <h1 class="waffle-percent">{numFilledCells}%</h1>
     <!-- {/key} -->
-    <h2>Of the GHG budget remained</h2>
-
+    <h2>remaining</h2>
   </div>
 
   <div class="waffle">
@@ -68,9 +80,14 @@
     justify-content: center;
   }
 
+  /* WAFFLE TITLE */
+  .waffle-title {
+    text-align: center;
+  }
+
   /* WAFFLE DESCRIPTION */
   .waffle-desc {
-    max-width: 100px;
+    max-width: 200px;
   }
 
   /* WAFFLE CHART */
