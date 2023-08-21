@@ -26,7 +26,7 @@
     unitWidth = (chartWidth / numCols) - gutter;
     unitHeight = unitWidth;
 
-    console.log({chartWidth, unitWidth});
+    // console.log({chartWidth, unitWidth});
   }
   // --------------------------------------------------------------
   // UPDATE NUMBER OF UNIT CELLS WHICH ARE FILLED

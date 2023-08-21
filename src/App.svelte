@@ -1,5 +1,6 @@
 <script>
   import WaffleChart from "./lib/Waffle-Chart.svelte";
+  import YearSlider from "./lib/YearSlider.svelte";
 
 
   // --------------------------------------------------------------
@@ -9,11 +10,8 @@
 </script>
 
 <main>
-  <div class="range-container">
-    <input type="range" min="0" max="100" bind:value={percGHGBudget} />
-  </div>
+    <YearSlider bind:sliderValue={percGHGBudget}/>
     <WaffleChart numFilledCells={percGHGBudget} />
 </main>
 
-<style>
-</style>
+
