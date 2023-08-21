@@ -29,28 +29,54 @@
   }
 </script>
 
-{#each grid as row, i}
-  {#each row as cell, j}
-    <rect
-      class={grid[i][j] ? "unit filled" : "unit empty"}
-      width={unitWidth}
-      height={unitHeight}
-      x={j * (unitWidth + gutter) + gutter / 2}
-      y={i * (unitHeight + gutter) + gutter / 2}
-      stroke={grid[i][j] ? "white" : "black"}
-      stroke-width={grid[i][j] ? 0 : 1}
-      fill={grid[i][j] ? "black" : "white"}
-    />
-  {/each}
-{/each}
+<div class="waffle-container">
+  <div class="waffle-desc">
+    <h2>In 19..</h2>
+    <!-- {#key numFilledCells} -->
+        <h1 class="waffle-percent">{numFilledCells}%</h1>
+    <!-- {/key} -->
+    <h2>Of the GHG budget remained</h2>
+
+  </div>
+
+  <div class="waffle">
+    <svg height="400" width="400">
+      {#each grid as row, i}
+        {#each row as cell, j}
+          <rect
+            class={grid[i][j] ? "unit filled" : "unit empty"}
+            width={unitWidth}
+            height={unitHeight}
+            x={j * (unitWidth + gutter) + gutter / 2}
+            y={i * (unitHeight + gutter) + gutter / 2}
+            stroke={grid[i][j] ? "white" : "black"}
+            stroke-width={grid[i][j] ? 0 : 1}
+            fill={grid[i][j] ? "black" : "white"}
+          />
+        {/each}
+      {/each}
+    </svg>
+  </div>
+</div>
 
 <style>
-  /* .unit.empty {
-    fill: white;
+  /* CONTAINERS */
+  .waffle-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
   }
-  .unit.filled {
-    fill: black;
-  } */
+
+  /* WAFFLE DESCRIPTION */
+  .waffle-desc {
+    max-width: 100px;
+  }
+
+  /* WAFFLE CHART */
+  .waffle {
+    /* flex-grow: 1; */
+  }
   .unit {
     transition-property: fill stroke;
     transition: 1s cubic-bezier(0.5, 1, 0.5, 1);

@@ -25,9 +25,7 @@
   <div class="range-container">
     <input type="range" min="0" max="100" bind:value={numFilledCells} />
   </div>
-  <svg height="400" width="400">
     <WaffleChart {grid} {unitHeight} {unitWidth} {gutter} {numFilledCells} />
-  </svg>
 </main>
 
 <style>
