@@ -2,6 +2,7 @@
   import { make2DArray } from "./unit-chart-util.js";
 
   export let numFilledCells;
+  export let year;
 
   // --------------------------------------------------------------
   // SET UP UNIT CHART
@@ -52,11 +53,11 @@
   }
 </script>
 
-<div class="waffle-title">
-  <h1>In 19.. {numFilledCells}% GHG budget was left</h1>
+<div class="waffle-title chart-title">
+  <h1>In {year} {numFilledCells}% GHG budget was left</h1>
 </div>
-<div class="waffle-container" >
-  <div class="waffle" bind:clientWidth={chartWidth}>
+<div class="waffle-container chart-container" >
+  <div class="waffle chart" bind:clientWidth={chartWidth}>
     <svg height={chartWidth} width={chartWidth}>
       {#each grid as row, i}
         {#each row as cell, j}
@@ -84,17 +85,11 @@
   }
 
   /* WAFFLE TITLE */
-  .waffle-title {
-    text-align: center;
-  }
+  
 
   /* WAFFLE DESCRIPTION */
 
   /* WAFFLE CHART */
-  .waffle {
-    margin: 0 auto;
-    max-width: 600px;
-  }
   .unit {
     transition-property: fill stroke;
     transition: 1s cubic-bezier(0.5, 1, 0.5, 1);
