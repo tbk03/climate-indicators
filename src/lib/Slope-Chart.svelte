@@ -3,6 +3,7 @@
   // IMPORTS
   // ----------------------------------------------------------------------
   import { scaleLinear } from "d3-scale";
+  import Arrow from "./Arrow.svelte";
 
   // ----------------------------------------------------------------------
   // PROPERTIES - PASS INTO THE COMPONENT
@@ -46,8 +47,8 @@
   // DUMMY DATA
   // ----------------------------------------------------------------------
   $: dummyData = [
-    { x: xYear1, y: 2, year: year },
-    { x: xYear2, y: 7, year: comparisonYear },
+    { x: xYear1, y: 1, year: year },
+    { x: xYear2, y: 10, year: comparisonYear },
   ];
 </script>
 
@@ -97,7 +98,14 @@
           />
         {/each}
         <!-- arrow -->
-
+        <Arrow
+          x1={(xYear2Prop + 0.05) * innerWidth}
+          y1={yScale(dummyData[0].y)}
+          x2={(xYear2Prop + 0.05) * innerWidth}
+          y2={yScale(dummyData[1].y) + 10}
+          arrowHeadWidth={10}
+          arrowHeadHeight={10}
+        />
       </g>
     </svg>
   </div>
