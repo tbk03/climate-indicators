@@ -14,7 +14,7 @@
 <main>
   <section class="interative-section">
     <YearSlider bind:sliderValue={percGHGBudget} />
-    <WaffleChart numFilledCells={percGHGBudget} {year} />
+    <!-- <WaffleChart numFilledCells={percGHGBudget} {year} /> -->
     <SlopeChart {year} />
   </section>
 </main>
