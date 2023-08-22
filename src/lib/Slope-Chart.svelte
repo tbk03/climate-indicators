@@ -28,7 +28,7 @@
   // how far across the svg should the vertical reference lines be
   // a proportion of svg width
   let xYear1Prop = 0.2;
-  let xYear2Prop = 0.5;
+  let xYear2Prop = 0.6;
 
   $: xYear1 = xYear1Prop * innerWidth;
   $: xYear2 = xYear2Prop * innerWidth;
@@ -46,8 +46,8 @@
   // DUMMY DATA
   // ----------------------------------------------------------------------
   $: dummyData = [
-    { x: xYear1, y: 0, year: year },
-    { x: xYear2, y: 9, year: comparisonYear },
+    { x: xYear1, y: 2, year: year },
+    { x: xYear2, y: 7, year: comparisonYear },
   ];
 </script>
 
@@ -58,7 +58,7 @@
   <div class="slope chart" bind:clientWidth={chartWidth}>
     <svg height={chartHeight} width={chartWidth}>
       <g transform="translate({margin.left}, {margin.top})">
-        <!-- basic slope chart -->
+        <!-- CORE CHART -->
         {#each dummyData as d}
           <!-- vertical reference lines -->
           <text x={d.x} y="0" dy="-10" class="year-label">{d.year} </text>
@@ -83,6 +83,21 @@
           y2={yScale(dummyData[1].y)}
           stroke="black"
         />
+
+        <!-- ANNOTATIONS -->
+        <!-- horizontal reference lines -->
+        {#each dummyData as d}
+          <line
+            class="horz-ref-line"
+            x1={d.x}
+            y1={yScale(d.y)}
+            x2={(xYear2Prop + 0.05) * innerWidth}
+            y2={yScale(d.y)}
+            stroke="black"
+          />
+        {/each}
+        <!-- arrow -->
+
       </g>
     </svg>
   </div>
