@@ -34,8 +34,6 @@
   $: xYear2 = xYear2Prop * innerWidth;
 
   // Y SCALE
-  let dummyDataY1 = { emissons: 0 };
-  let dummyDataY2 = { emissons: 9 };
   let yScale = scaleLinear().domain([10, 0]).range([0, innerHeight]);
 
   // ----------------------------------------------------------------------
@@ -43,6 +41,14 @@
   // ----------------------------------------------------------------------
   let comparisonOffset = 10;
   $: comparisonYear = year - comparisonOffset;
+
+  // ----------------------------------------------------------------------
+  // DUMMY DATA
+  // ----------------------------------------------------------------------
+  $: dummyData = [
+    { x: xYear1, y: 0, year: year },
+    { x: xYear2, y: 9, year: comparisonYear },
+  ];
 </script>
 
 <div class="waffle-title chart-title">
@@ -52,39 +58,29 @@
   <div class="slope chart" bind:clientWidth={chartWidth}>
     <svg height={chartHeight} width={chartWidth}>
       <g transform="translate({margin.left}, {margin.top})">
-        <!-- vertical reference line labels -->
-        <text x={xYear1} y="0" dy="-10" class="year-label"
-          >{comparisonYear}
-        </text>
-        <text x={xYear2} y="0" dy="-10" class="year-label">{year}</text>
-
-        <!-- vertical reference lines -->
-        <line
-          class="vert-ref-line"
-          x1={xYear1}
-          x2={xYear1}
-          y1="0"
-          y2={innerHeight}
-          stroke="black"
-        />
-        <line
-          class="vert-ref-line"
-          x1={xYear2}
-          x2={xYear2}
-          y1="0"
-          y2={innerHeight}
-          stroke="black"
-        />
+        <!-- basic slope chart -->
+        {#each dummyData as d}
+          <!-- vertical reference lines -->
+          <text x={d.x} y="0" dy="-10" class="year-label">{d.year} </text>
+          <line
+            class="vert-ref-line"
+            x1={d.x}
+            x2={d.x}
+            y1="0"
+            y2={innerHeight}
+            stroke="black"
+          />
+          <!-- points -->
+          <circle cx={d.x} cy={yScale(d.y)} r="10" />
+        {/each}
 
         <!-- Slope -->
-        <circle cx={xYear1} cy={yScale(dummyDataY1.emissons)} r="10" />
-        <circle cx={xYear2} cy={yScale(dummyDataY2.emissons)} r="10" />
         <line
           class="slope-line"
-          x1={xYear1}
-          y1={yScale(dummyDataY1.emissons)}
-          x2={xYear2}
-          y2={yScale(dummyDataY2.emissons)}
+          x1={dummyData[0].x}
+          y1={yScale(dummyData[0].y)}
+          x2={dummyData[1].x}
+          y2={yScale(dummyData[1].y)}
           stroke="black"
         />
       </g>
