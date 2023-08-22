@@ -21,9 +21,9 @@
 </defs>
 <line
   {x1}
-  {y1}
+  y1={y1 - (arrowHeadHeight*0.2)}
   {x2}
-  {y2}
+  y2={y2 + (arrowHeadHeight*1.2)}
   stroke="#000"
   marker-end="url(#arrowhead)"
 />

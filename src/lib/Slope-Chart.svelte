@@ -44,19 +44,38 @@
   $: comparisonYear = year - comparisonOffset;
 
   // ----------------------------------------------------------------------
-  // DUMMY DATA
+  // (DUMMY) DATA
   // ----------------------------------------------------------------------
   $: dummyData = [
-    { x: xYear1, y: 1, year: year },
-    { x: xYear2, y: 10, year: comparisonYear },
+    { x: xYear1, y: 2, year: year },
+    { x: xYear2, y: 4, year: comparisonYear },
   ];
+
+  // ----------------------------------------------------------------------
+  // ANNOTATION
+  // ----------------------------------------------------------------------
+
+  // as proportions of svg width
+  let arrowOffset = 0.05;
+  let annotationOffset = 0.02;
+  let annotationHeight;
+
+  $: annotationLeft =
+    ((xYear2Prop + arrowOffset + annotationOffset) * innerWidth) + margin.left;
+  $: annotationTop =
+    (yScale((dummyData[1].y + dummyData[0].y) / 2)) + margin.top - (annotationHeight / 2);
+
+  $: console.log({annotationTop});
+
+  $: percChange = (dummyData[1].y / dummyData[0].y) * 100 - 100;
+
 </script>
 
 <div class="waffle-title chart-title">
   <h1>Between {comparisonYear} and {year} GHG emissions rose by ...%</h1>
 </div>
 <div class="slope-container chart-container">
-  <div class="slope chart" bind:clientWidth={chartWidth}>
+  <div class="slope-chart chart" bind:clientWidth={chartWidth}>
     <svg height={chartHeight} width={chartWidth}>
       <g transform="translate({margin.left}, {margin.top})">
         <!-- CORE CHART -->
@@ -99,15 +118,23 @@
         {/each}
         <!-- arrow -->
         <Arrow
-          x1={(xYear2Prop + 0.05) * innerWidth}
+          x1={(xYear2Prop + arrowOffset) * innerWidth}
           y1={yScale(dummyData[0].y)}
-          x2={(xYear2Prop + 0.05) * innerWidth}
-          y2={yScale(dummyData[1].y) + 10}
+          x2={(xYear2Prop + arrowOffset) * innerWidth}
+          y2={yScale(dummyData[1].y)}
           arrowHeadWidth={10}
           arrowHeadHeight={10}
         />
       </g>
     </svg>
+    <!-- arrow annotation -->
+    <div
+      class="perc-change-annotation"
+      bind:clientHeight={annotationHeight}
+      style="left:{annotationLeft}px; top:{annotationTop}px;"
+    >
+      {percChange}%
+    </div>
   </div>
 </div>
 
@@ -115,5 +142,19 @@
   /* REFERENCE LINES - YEARS */
   .year-label {
     text-anchor: middle;
+  }
+
+  /* TEXT ANNOTATION */
+  .perc-change-annotation {
+    position: absolute;
+    /* text-align: left; */    
+  }
+
+  .perc-change-annotation p {
+    padding: 0 5px 0 5px;
+    margin: 0;
+  }
+  .slope-chart {
+    position: relative;
   }
 </style>
