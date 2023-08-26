@@ -2,9 +2,25 @@
   import { csv } from "d3-fetch";
   import { tidy, mutate, filter } from "@tidyjs/tidy";
 
+  // -----------------------------------------------------------------------------
+  // IMPORT AND CLEAN DATA FROM
+  // -----------------------------------------------------------------------------
+
+  // LOAD FROM GITHUB
+  async function loadData() {
+    const response = await csv(
+      "https://raw.githubusercontent.com/ClimateIndicator/GHG-Emissions-Assessment/main/results/ghg_emissions_co2e.csv"
+    );
+    const processed = await processData(response);
+    // console.log(processed);
+    return processed;
+  }
+
+  // CLEAN DATA USING tidy.js
   async function processData(data) {
     const processed = tidy(
       data,
+      // data quality poor before 1959
       filter((d) => d.year >= 1959),
       mutate({
         // convert strings to numbers
@@ -23,17 +39,7 @@
     return processed;
   }
 
-  async function loadData() {
-    const response = await csv(
-      "https://raw.githubusercontent.com/ClimateIndicator/GHG-Emissions-Assessment/main/results/ghg_emissions_co2e.csv"
-    );
-    const processed = await processData(response);
-    console.log(processed);
-    return processed;
-  }
-
   let data = loadData();
-  
 </script>
 
 <p>Line Chart</p>
