@@ -2,6 +2,7 @@
   import WaffleChart from "./lib/Waffle-Chart.svelte";
   import YearSlider from "./lib/YearSlider.svelte";
   import SlopeChart from "./lib/Slope-Chart.svelte";
+  import LineChart from "./lib/LineChart.svelte";
 
   // --------------------------------------------------------------
   // UPDATE NUMBER OF UNIT CELLS WHICH ARE FILLED
@@ -13,9 +14,11 @@
 
 <main>
   <section class="interative-section">
-    <YearSlider bind:sliderValue={percGHGBudget} />
+    <!-- <YearSlider bind:sliderValue={percGHGBudget} />
     <WaffleChart numFilledCells={percGHGBudget} {year} />
-    <SlopeChart {year} />
+    <SlopeChart {year} /> -->
+    <div>hello</div>
+    <LineChart/>
   </section>
 </main>
 
