@@ -88,7 +88,7 @@
   <svg {width} {height}>
     <!-- apply top and left margins -->
     <g class='inner-chart' transform="translate({margin.left}, {margin.top})">
-      <AxisY {yScale} width={innerWidth} />
+      <AxisY {yScale} {xScale} width={innerWidth} />
       <AxisX {xScale} height={innerHeight} width={innerWidth} />
 
       {#each data as d}
