@@ -2,10 +2,12 @@
   // D3
   import { csv } from "d3-fetch";
   import { scaleLinear } from "d3-scale";
-  import { extent } from "d3-array";
+  import { extent, max } from "d3-array";
 
   // tidy-js
   import { tidy, mutate, filter } from "@tidyjs/tidy";
+  import AxisX from "../components/AxisX.svelte";
+  import AxisY from "../components/AxisY.svelte";
 
   // -----------------------------------------------------------------------------
   // IMPORT AND CLEAN DATA FROM
@@ -66,8 +68,7 @@
     .range([0, width]);
 
   $: yScale = scaleLinear()
-    // .domain(extent(data, (d) => yAccessor(d)))
-    .domain([0, 50])
+    .domain([0, max(data, (d) => yAccessor(d))])
     .range([height, 0]);
 </script>
 
@@ -75,6 +76,9 @@
   <p>Loading...</p>
 {:then data}
   <svg {width} {height}>
+    <AxisY {yScale} {width} />
+    <AxisX {xScale} {height} {width} />
+
     {#each data as d}
       <circle
         cx={xScale(xAccessor(d))}
