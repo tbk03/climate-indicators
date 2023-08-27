@@ -8,21 +8,16 @@
   export let yAccessor;
   export let data;
 
-  let dataPoint; 
-  dataPoint = data.find((d) => xAccessor(d) === xAccessor(positionOnChart));
-  //   console.log({ dataPoint });
+  let dataPoint = data.find((d) => xAccessor(d) === xAccessor(positionOnChart));
+  console.log({ data });
 
   const tweenedTransition = {
     duration: 200,
     easing: cubicOut,
   };
 
-  let nearestDataX;
-  let nearestDataY;
-  if (data) {
-    nearestDataX = tweened(xAccessor(dataPoint), tweenedTransition);
-    nearestDataY = tweened(yAccessor(dataPoint), tweenedTransition);
-  }
+  let nearestDataX = tweened(xAccessor(dataPoint), tweenedTransition);
+  let nearestDataY = tweened(yAccessor(dataPoint), tweenedTransition);
 
   $: {
     dataPoint = data.find((d) => xAccessor(d) === xAccessor(positionOnChart));

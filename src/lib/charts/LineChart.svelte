@@ -75,7 +75,6 @@
   // -----------------------------------------------------------------------------
   // SCALES
   // -----------------------------------------------------------------------------
-  $: console.log(data);
 
   $: xScale = scaleLinear()
     .domain(extent(data, (d) => xAccessor(d)))
@@ -109,9 +108,11 @@
   }
 </script>
 
-{#await data}
-  <p>Loading...</p>
-{:then data}
+<!-- while waiting for data to load hold the space -->
+{#if data.length === 0}
+  <svg {width} {height} />
+<!-- then create the chart -->
+{:else}
   <div class="chart-container" bind:clientWidth={width}>
     <svg {width} {height}>
       <!-- apply top and left margins -->
@@ -133,7 +134,14 @@
         <Line {xScale} {yScale} {xAccessor} {yAccessor} {data} />
 
         {#if hoveredEvent}
-          <Tooltip {positionOnChart} {xScale} {yScale} {data} {xAccessor} {yAccessor}/>
+          <Tooltip
+            {positionOnChart}
+            {xScale}
+            {yScale}
+            {data}
+            {xAccessor}
+            {yAccessor}
+          />
         {/if}
 
         <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -150,7 +158,7 @@
       </g>
     </svg>
   </div>
-{/await}
+{/if}
 
 <p>Line Chart</p>
 
