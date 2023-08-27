@@ -5,7 +5,6 @@
   export let width;
 
   $: xTicks = xScale.ticks(5);
-  $: console.log({ xTicks });
 </script>
 
 <g class="axis x" transform="translate(0, {height})">

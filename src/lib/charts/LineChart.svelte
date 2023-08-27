@@ -9,6 +9,7 @@
   import AxisX from "../components/AxisX.svelte";
   import AxisY from "../components/AxisY.svelte";
   import Line from "../components/Line.svelte";
+  import Tooltip from "../components/Tooltip.svelte";
 
   // -----------------------------------------------------------------------------
   // IMPORT AND CLEAN DATA FROM
@@ -83,6 +84,29 @@
   $: yScale = scaleLinear()
     .domain([0, max(data, (d) => yAccessor(d))])
     .range([innerHeight, 0]);
+
+  // -----------------------------------------------------------------------------
+  // TOOLTIP
+  // -----------------------------------------------------------------------------
+  let hoveredEvent;
+  // $: console.log(hoveredEvent);
+
+  let mousePosition = {};
+  let positionOnChart = {};
+  $: {
+    // calculate mouse position from event
+    if (hoveredEvent) {
+      mousePosition.x = hoveredEvent.layerX - margin.left;
+      mousePosition.y = hoveredEvent.layerY - margin.top;
+
+      positionOnChart = {
+        year: Math.round(xScale.invert(mousePosition.x)),
+        total_ghg_emissions: yScale.invert(mousePosition.y),
+      };
+
+      // console.log(positionOnChart);
+    }
+  }
 </script>
 
 {#await data}
@@ -107,6 +131,22 @@
         {/each}
 
         <Line {xScale} {yScale} {xAccessor} {yAccessor} {data} />
+
+        {#if hoveredEvent}
+          <Tooltip {positionOnChart} {xScale} {yScale} {data} {xAccessor} {yAccessor}/>
+        {/if}
+
+        <!-- svelte-ignore a11y-no-static-element-interactions -->
+        <!-- Event listener layer -->
+        <rect
+          x={0}
+          y={0}
+          width={innerWidth}
+          height={innerHeight}
+          fill="transparent"
+          on:mousemove={(e) => (hoveredEvent = e)}
+          on:mouseleave={() => (hoveredEvent = null)}
+        />
       </g>
     </svg>
   </div>
@@ -121,7 +161,7 @@
     fill: hsla(212, 10%, 53%, 1); /* The color of our text */
   }
 
-  .chart-container{
+  .chart-container {
     max-width: 800px;
   }
 </style>
