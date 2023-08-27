@@ -1,5 +1,5 @@
 <script>
-  import { make2DArray } from "./unit-chart-util.js";
+  import { make2DArray } from "../util/unit-chart-util.js";
 
   export let numFilledCells;
   export let year;
