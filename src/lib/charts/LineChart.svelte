@@ -8,6 +8,7 @@
   import { tidy, mutate, filter } from "@tidyjs/tidy";
   import AxisX from "../components/AxisX.svelte";
   import AxisY from "../components/AxisY.svelte";
+  import Line from "../components/Line.svelte";
 
   // -----------------------------------------------------------------------------
   // IMPORT AND CLEAN DATA FROM
@@ -29,9 +30,11 @@
     const processed = tidy(
       data,
       // data quality poor before 1959
+      // @ts-ignore
       filter((d) => d.year >= 1959),
       mutate({
         // convert strings to numbers
+        // @ts-ignore
         year: (d) => +d.year,
         "F-gases": (d) => +d["F-gases"],
         N2O: (d) => +d["N2O"],
@@ -101,6 +104,8 @@
           stroke-width={1}
         />
       {/each}
+
+      <Line {xScale} {yScale} {xAccessor} {yAccessor} {data}/>
     </g>
   </svg>
 {/await}
