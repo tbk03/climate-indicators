@@ -1,8 +1,8 @@
 <script>
-  import WaffleChart from "./lib/Waffle-Chart.svelte";
-  import YearSlider from "./lib/YearSlider.svelte";
-  import SlopeChart from "./lib/Slope-Chart.svelte";
-  import LineChart from "./lib/LineChart.svelte";
+  import WaffleChart from "./lib/charts/Waffle-Chart.svelte";
+  import YearSlider from "./lib/components/YearSlider.svelte";
+  import SlopeChart from "./lib/charts/Slope-Chart.svelte";
+  import LineChart from "./lib/charts/LineChart.svelte";
 
   // --------------------------------------------------------------
   // UPDATE NUMBER OF UNIT CELLS WHICH ARE FILLED

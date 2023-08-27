@@ -3,7 +3,7 @@
   // IMPORTS
   // ----------------------------------------------------------------------
   import { scaleLinear } from "d3-scale";
-  import Arrow from "./Arrow.svelte";
+  import Arrow from "../components/Arrow.svelte";
 
   // ----------------------------------------------------------------------
   // PROPERTIES - PASS INTO THE COMPONENT
