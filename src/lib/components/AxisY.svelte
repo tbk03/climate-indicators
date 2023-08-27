@@ -6,17 +6,6 @@
   $: yTicks = yScale.ticks(5);
 </script>
 
-<!-- filter for solid svg text background -->
-<defs>
-  <filter x="0" y="0" width="1" height="1" id="solid">
-    <feFlood flood-color="white" result="bg" />
-    <feMerge>
-      <feMergeNode in="bg" />
-      <feMergeNode in="SourceGraphic" />
-    </feMerge>
-  </filter>
-</defs>
-
 <g class="axis-y">
   {#each yTicks as tick, index}
     <g class="tick" transform="translate(0, {yScale(tick)})">
@@ -36,7 +25,6 @@
         x="-20"
         y="0"
         dominant-baseline="middle"
-        filter="url(#solid)"
         >{tick} {index === yTicks.length - 1 ? " Gt CO2e" : ""}</text
       >
     </g>
