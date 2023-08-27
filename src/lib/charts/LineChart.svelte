@@ -63,7 +63,7 @@
     left: 30,
   };
 
-  const innerWidth = width - margin.left - margin.right;
+  $: innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
   // -----------------------------------------------------------------------------
@@ -88,26 +88,40 @@
 {#await data}
   <p>Loading...</p>
 {:then data}
-  <svg {width} {height}>
-    <!-- apply top and left margins -->
-    <g class='inner-chart' transform="translate({margin.left}, {margin.top})">
-      <AxisY {yScale} {xScale} width={innerWidth} />
-      <AxisX {xScale} height={innerHeight} width={innerWidth} />
+  <div class="chart-container" bind:clientWidth={width}>
+    <svg {width} {height}>
+      <!-- apply top and left margins -->
+      <g class="inner-chart" transform="translate({margin.left}, {margin.top})">
+        <AxisY {yScale} {xScale} width={innerWidth} />
+        <AxisX {xScale} height={innerHeight} width={innerWidth} />
 
-      {#each data as d}
-        <circle
-          cx={xScale(xAccessor(d))}
-          cy={yScale(yAccessor(d))}
-          r={1}
-          fill="purple"
-          stroke="black"
-          stroke-width={1}
-        />
-      {/each}
+        {#each data as d}
+          <circle
+            cx={xScale(xAccessor(d))}
+            cy={yScale(yAccessor(d))}
+            r={1}
+            fill="purple"
+            stroke="black"
+            stroke-width={1}
+          />
+        {/each}
 
-      <Line {xScale} {yScale} {xAccessor} {yAccessor} {data}/>
-    </g>
-  </svg>
+        <Line {xScale} {yScale} {xAccessor} {yAccessor} {data} />
+      </g>
+    </svg>
+  </div>
 {/await}
 
 <p>Line Chart</p>
+
+<style>
+  :global(.tick text, .axis-title) {
+    font-weight: 400; /* How thick our text is */
+    font-size: 12px; /* How big our text is */
+    fill: hsla(212, 10%, 53%, 1); /* The color of our text */
+  }
+
+  .chart-container{
+    max-width: 800px;
+  }
+</style>

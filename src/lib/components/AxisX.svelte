@@ -18,7 +18,7 @@
         y={6}
         dy={10}
         dominant-baseline="middle"
-        text-anchor={index === 0 ? "start" : "middle"}>{tick}</text
+        text-anchor="middle">{tick}</text
       >
     </g>
   {/each}
