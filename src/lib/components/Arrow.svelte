@@ -5,18 +5,23 @@
     export let y2;
     export let arrowHeadWidth = 30;
     export let arrowHeadHeight = 30;
+
+    let strokeWidth = 3; 
+    let arrowHeadWidthAdj = arrowHeadWidth - (2 * strokeWidth);
+    let arrowHeadHeightAdj = arrowHeadHeight - (2 * strokeWidth);
+
 </script>
 
 <defs>
   <marker
     id="arrowhead"
-    markerWidth={arrowHeadWidth}
-    markerHeight={arrowHeadHeight}
+    markerWidth={arrowHeadWidthAdj}
+    markerHeight={arrowHeadHeightAdj}
     refX="0"
-    refY={arrowHeadHeight / 2}
+    refY={arrowHeadHeightAdj / 2}
     orient="auto"
   >
-    <polygon points="0 0, {arrowHeadWidth} {arrowHeadHeight / 2}, 0 {arrowHeadHeight}" />
+    <polygon points="0 0, {arrowHeadWidthAdj} {arrowHeadHeightAdj / 2}, 0 {arrowHeadHeightAdj}" />
   </marker>
 </defs>
 <line
@@ -25,5 +30,6 @@
   {x2}
   y2={y2 + (arrowHeadHeight*1.2)}
   stroke="#000"
+  stroke-width={strokeWidth}
   marker-end="url(#arrowhead)"
 />

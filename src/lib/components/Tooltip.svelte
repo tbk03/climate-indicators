@@ -53,15 +53,22 @@
   <line
     x1={xScale(xAccessor(lastDataPoint))}
     y1={yScale(yAccessor(lastDataPoint))}
-    x2={xScale(2023)}
+    x2={xScale(1958)}
     y2={yScale(yAccessor(lastDataPoint))}
+    stroke="black"
+  />
+  <line
+    x1={xScale(xAccessor(lastDataPoint))}
+    y1={yScale(yAccessor(lastDataPoint))}
+    x2={xScale(xAccessor(lastDataPoint))}
+    y2={yScale(0)}
     stroke="black"
   />
   <circle
     cx={xScale(xAccessor(lastDataPoint))}
     cy={yScale(yAccessor(lastDataPoint))}
-    r={10}
-    fill="red"
+    r={5}
+    fill="black"
   />
   <!-- nearest data point - moves with cursor -->
   <line
@@ -74,17 +81,17 @@
   <line
     x1={$nearestDataX}
     y1={$nearestDataY}
-    x2={xScale(2023)}
+    x2={xScale(1958)}
     y2={$nearestDataY}
     stroke="black"
   />
-  <circle cx={$nearestDataX} cy={$nearestDataY} r={10} fill="red" />
+  <circle cx={$nearestDataX} cy={$nearestDataY} r={5} fill="black" />
 
   <!-- arrow - showing increase in emissions -->
   <!-- only show if there is space for the arrow head -->
   {#if Math.abs($nearestDataY - yScale(yAccessor(lastDataPoint))) > 30}
-    <!-- transition need to be repeated within the if to apply -->
-    <g transition:fade={{ duration: transitionDuration, easing: cubicIn }}>
+  <!-- transition need to be repeated within the if to apply -->
+  <g transition:fade={{ duration: transitionDuration, easing: cubicIn }}>
       <Arrow
         x1={xScale(2023)}
         y1={$nearestDataY}
@@ -95,4 +102,14 @@
       />
     </g>
   {/if}
+
+  <!-- try a triangle -->
+  <polygon
+    points="{$nearestDataX},{$nearestDataY} {xScale(
+      xAccessor(lastDataPoint)
+    )},{yScale(yAccessor(lastDataPoint))} {xScale(
+      xAccessor(lastDataPoint)
+    )}, {$nearestDataY}"
+    style="opacity:0.5;"
+  />
 </g>

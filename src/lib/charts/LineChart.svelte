@@ -120,7 +120,7 @@
         <AxisY {yScale} {xScale} width={innerWidth} />
         <AxisX {xScale} height={innerHeight} width={innerWidth} />
 
-        {#each data as d}
+        <!-- {#each data as d}
           <circle
             cx={xScale(xAccessor(d))}
             cy={yScale(yAccessor(d))}
@@ -129,7 +129,7 @@
             stroke="black"
             stroke-width={1}
           />
-        {/each}
+        {/each} -->
 
         <Line {xScale} {yScale} {xAccessor} {yAccessor} {data} />
 
