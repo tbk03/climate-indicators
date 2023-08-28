@@ -87,7 +87,7 @@
   ];
 
   // -----------------------------------------------------------------------------
-  // Circles - coordinates in pixels
+  // CIRCLES - coordinates in pixels
   // -----------------------------------------------------------------------------
   $: circles = [
     { ref: "nearest", cx: $nearestDataX, cy: $nearestDataY },
@@ -95,10 +95,64 @@
   ];
 
   // -----------------------------------------------------------------------------
+  // TEXT LABELS - coordinates in pixels
+  // -----------------------------------------------------------------------------
+  $: textLabels = [
+    {
+      ref: "x-nearest",
+      text: xScale.invert($nearestDataX),
+      x: $nearestDataX,
+      y: yScale(0),
+      dx: 0,
+      dy: 25,
+      textAnchor: "middle",
+      dominantBaseline: "auto",
+      visible: true,
+    },
+    {
+      ref: "x-last",
+      text: xScale.invert(lastDataPointCoord.x),
+      x: lastDataPointCoord.x,
+      y: yScale(0),
+      dx: 0,
+      dy: 25,
+      textAnchor: "middle",
+      dominantBaseline: "auto",
+      visible:
+        Math.abs(lastDataPointCoord.x - $nearestDataX) < 30 ? false : true,
+    },
+    {
+      ref: "y-nearest",
+      text: yScale.invert($nearestDataY),
+      x: xScale.range()[0],
+      y: $nearestDataY,
+      dx: -5,
+      dy: 0,
+      textAnchor: "end",
+      dominantBaseline: "middle",
+      visible: true,
+    },
+    {
+      ref: "y-last",
+      text: yScale.invert(lastDataPointCoord.y),
+      x: xScale.range()[0],
+      y: lastDataPointCoord.y,
+      dx: -5,
+      dy: 0,
+      textAnchor: "end",
+      dominantBaseline: "middle",
+      visible:
+        Math.abs(lastDataPointCoord.y - $nearestDataY) < 20 ? false : true,
+    },
+  ];
+
+  $: console.log(xScale(0));
+  // -----------------------------------------------------------------------------
   // THE ARROW
   // -----------------------------------------------------------------------------
+  const minArrowLength = 30; //px
   $: showArrow =
-    Math.abs($nearestDataY - yScale(yAccessor(lastDataPoint))) > 30;
+    Math.abs($nearestDataY - lastDataPointCoord.y) > minArrowLength;
 </script>
 
 <!-- TOOLTIP GROUP -->
@@ -119,55 +173,32 @@
   <!-- CIRCLES -->
   <g class="circles">
     {#each circles as c}
-      <circle
-        cx={c.cx}
-        cy={c.cy}
-        r={5}
-        fill="black"
-      />
+      <circle cx={c.cx} cy={c.cy} r={5} fill="black" />
     {/each}
   </g>
 
   <!-- last data point - fixed -->
 
-  <rect
-    class="reference-text-bg"
-    x={xScale(xAccessor(lastDataPoint)) - 25}
-    y={yScale(0) + 9}
-    height={20}
-    width={50}
-    fill="white"
-  />
-  <text
-    class="reference-text"
-    x={xScale(xAccessor(lastDataPoint))}
-    y={yScale(0)}
-    dy={25}
-    text-anchor="middle">{Math.round(xAccessor(lastDataPoint))}</text
-  >
+  <g class="text-labels">
+    {#each textLabels as tl}
+      <text
+        class="reference-text"
+        x={tl.x}
+        y={tl.y}
+        dx={tl.dx}
+        dy={tl.dy}
+        text-anchor={tl.textAnchor}
+        dominant-baseline={tl.dominantBaseline}
+      >
+        {#if tl.visible}
+          {#key tl.visible}
+            {Math.round(tl.text)}
+          {/key}
+        {/if}
+      </text>
+    {/each}
+  </g>
 
-  <!-- to give text padding -->
-  <rect
-    class="reference-text-bg"
-    x={$nearestDataX - 25}
-    y={yScale(0) + 9}
-    height={20}
-    width={50}
-    fill="white"
-  />
-  <text
-    class="reference-text"
-    x={$nearestDataX}
-    y={yScale(0)}
-    dy={25}
-    text-anchor="middle">{Math.round(xScale.invert($nearestDataX))}</text
-  >
-  <!-- horizontal reference -->
-
-  <!-- <circle cx={$nearestDataX} cy={$nearestDataY} r={5} fill="black" /> -->
-
-  <!-- arrow - showing increase in emissions -->
-  <!-- only show if there is space for the arrow head -->
   {#if showArrow}
     <!-- transition need to be repeated within the if to apply -->
     {#key showArrow}
@@ -204,10 +235,6 @@
 
   .reference-text {
     fill: rgb(161, 156, 156);
-    pointer-events: none;
-  }
-
-  .reference-text-bg {
     pointer-events: none;
   }
 </style>
