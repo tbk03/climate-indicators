@@ -103,7 +103,7 @@
         total_ghg_emissions: yScale.invert(mousePosition.y),
       };
 
-      console.log(mousePosition);
+      // console.log(mousePosition);
     }
   }
 </script>

@@ -44,6 +44,12 @@
     (d) => xAccessor(d) === max(data, (d) => xAccessor(d))
   );
   // $: console.log({ lastDataPoint });
+
+  // -----------------------------------------------------------------------------
+  // THE ARROW
+  // -----------------------------------------------------------------------------
+  $: showArrow = Math.abs($nearestDataY - yScale(yAccessor(lastDataPoint))) > 30;
+
 </script>
 
 <g transition:fade={{ duration: transitionDuration, easing: cubicIn }}>
@@ -126,9 +132,9 @@
 
   <!-- arrow - showing increase in emissions -->
   <!-- only show if there is space for the arrow head -->
-  {#if Math.abs($nearestDataY - yScale(yAccessor(lastDataPoint))) > 30}
+  {#if showArrow}
     <!-- transition need to be repeated within the if to apply -->
-    {#key $nearestDataY}
+    {#key showArrow}
       <g>
         <Arrow
           x1={xScale(2023)}
