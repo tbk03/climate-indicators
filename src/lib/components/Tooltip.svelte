@@ -50,13 +50,11 @@
     y: yScale(yAccessor(lastDataPoint)),
   };
 
-  console.log({lastDataPointCoord});
+  console.log({ lastDataPointCoord });
 
   // -----------------------------------------------------------------------------
   // REFERENCE LINES - coordinates in pixels
   // -----------------------------------------------------------------------------
-
-  console.log();
   $: referenceLines = [
     {
       ref: "nearestVert",
@@ -85,8 +83,17 @@
       y1: lastDataPointCoord.y,
       x2: xScale.range()[0],
       y2: lastDataPointCoord.y,
-    }
+    },
   ];
+
+  // -----------------------------------------------------------------------------
+  // Circles - coordinates in pixels
+  // -----------------------------------------------------------------------------
+  $: circles = [
+    { ref: "nearest", cx: $nearestDataX, cy: $nearestDataY },
+    { ref: "last", cx: lastDataPointCoord.x, cy: lastDataPointCoord.y },
+  ];
+
   // -----------------------------------------------------------------------------
   // THE ARROW
   // -----------------------------------------------------------------------------
@@ -94,14 +101,35 @@
     Math.abs($nearestDataY - yScale(yAccessor(lastDataPoint))) > 30;
 </script>
 
+<!-- TOOLTIP GROUP -->
 <g transition:fade={{ duration: transitionDuration, easing: cubicIn }}>
   <!-- REFERENCE LINES -->
-  {#each referenceLines as rl}
-    <line class="reference-line" x1={rl.x1} y1={rl.y1} x2={rl.x2} y2={rl.y2} />
-  {/each}
+  <g class="reference-lines">
+    {#each referenceLines as rl}
+      <line
+        class="reference-line"
+        x1={rl.x1}
+        y1={rl.y1}
+        x2={rl.x2}
+        y2={rl.y2}
+      />
+    {/each}
+  </g>
+
+  <!-- CIRCLES -->
+  <g class="circles">
+    {#each circles as c}
+      <circle
+        cx={c.cx}
+        cy={c.cy}
+        r={5}
+        fill="black"
+      />
+    {/each}
+  </g>
 
   <!-- last data point - fixed -->
- 
+
   <rect
     class="reference-text-bg"
     x={xScale(xAccessor(lastDataPoint)) - 25}
@@ -117,13 +145,6 @@
     dy={25}
     text-anchor="middle">{Math.round(xAccessor(lastDataPoint))}</text
   >
-
-  <circle
-    cx={xScale(xAccessor(lastDataPoint))}
-    cy={yScale(yAccessor(lastDataPoint))}
-    r={5}
-    fill="black"
-  />
 
   <!-- to give text padding -->
   <rect
@@ -143,7 +164,7 @@
   >
   <!-- horizontal reference -->
 
-  <circle cx={$nearestDataX} cy={$nearestDataY} r={5} fill="black" />
+  <!-- <circle cx={$nearestDataX} cy={$nearestDataY} r={5} fill="black" /> -->
 
   <!-- arrow - showing increase in emissions -->
   <!-- only show if there is space for the arrow head -->
