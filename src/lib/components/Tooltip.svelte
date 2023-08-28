@@ -1,6 +1,12 @@
 <script>
+  // SVELTE
   import { tweened } from "svelte/motion";
-  import { cubicOut } from "svelte/easing";
+  import { cubicOut, cubicIn } from "svelte/easing";
+  import {fade} from "svelte/transition";
+
+  // D3.js
+  import { max } from "d3-array";
+
   export let positionOnChart;
   export let xScale;
   export let yScale;
@@ -8,11 +14,15 @@
   export let yAccessor;
   export let data;
 
+  // -----------------------------------------------------------------------------
+  // SELECTING A DATAPOINT
+  // -----------------------------------------------------------------------------
   let dataPoint = data.find((d) => xAccessor(d) === xAccessor(positionOnChart));
   console.log({ data });
 
+  const transitionDuration = 200;
   const tweenedTransition = {
-    duration: 200,
+    duration: transitionDuration,
     easing: cubicOut,
   };
 
@@ -21,19 +31,41 @@
 
   $: {
     dataPoint = data.find((d) => xAccessor(d) === xAccessor(positionOnChart));
-    nearestDataX.set(xAccessor(dataPoint));
-    nearestDataY.set(yAccessor(dataPoint));
+    nearestDataX.set(xScale(xAccessor(dataPoint)));
+    nearestDataY.set(yScale(yAccessor(dataPoint)));
   }
 
-  //   $: console.log(dataPoint);
-  //   $: nearestDataX = tweened();
+  // -----------------------------------------------------------------------------
+  // THE LAST DATA POINT
+  // -----------------------------------------------------------------------------
+  let lastDataPoint = data.find(
+    (d) => xAccessor(d) === max(data, (d) => xAccessor(d))
+  );
+  $: console.log({ lastDataPoint });
 </script>
 
-{#await data then data}
+<g transition:fade={{duration: transitionDuration, easing: cubicIn}}>
+  <!-- fixed on last data point -->
   <circle
-    cx={xScale($nearestDataX)}
-    cy={yScale($nearestDataY)}
+    cx={xScale(xAccessor(lastDataPoint))}
+    cy={yScale(yAccessor(lastDataPoint))}
     r={10}
     fill="red"
   />
-{/await}
+  <!-- moves with cursor -->
+  <circle cx={$nearestDataX} cy={$nearestDataY} r={10} fill="red" />
+  <line
+    x1={$nearestDataX}
+    y1={$nearestDataY}
+    x2={$nearestDataX}
+    y2={yScale(0)}
+    stroke="black"
+  />
+  <line
+    x1={$nearestDataX}
+    y1={$nearestDataY}
+    x2={xScale(2030)}
+    y2={$nearestDataY}
+    stroke="black"
+  />
+</g>

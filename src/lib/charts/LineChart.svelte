@@ -59,7 +59,7 @@
 
   const margin = {
     top: 20,
-    right: 15,
+    right: 200,
     bottom: 20,
     left: 30,
   };
@@ -170,6 +170,6 @@
   }
 
   .chart-container {
-    max-width: 800px;
+    max-width: 1000px;
   }
 </style>
