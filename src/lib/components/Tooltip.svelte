@@ -28,8 +28,9 @@
     easing: cubicOut,
   };
 
-  let nearestDataX = tweened(xAccessor(dataPoint), tweenedTransition);
-  let nearestDataY = tweened(yAccessor(dataPoint), tweenedTransition);
+  // tweened coordinates in pixels
+  let nearestDataX = tweened(xScale(xAccessor(dataPoint)), tweenedTransition);
+  let nearestDataY = tweened(yScale(yAccessor(dataPoint)), tweenedTransition);
 
   $: {
     dataPoint = data.find((d) => xAccessor(d) === xAccessor(positionOnChart));
@@ -40,39 +41,67 @@
   // -----------------------------------------------------------------------------
   // THE LAST DATA POINT
   // -----------------------------------------------------------------------------
-  let lastDataPoint = data.find(
+  const lastDataPoint = data.find(
     (d) => xAccessor(d) === max(data, (d) => xAccessor(d))
   );
-  // $: console.log({ lastDataPoint });
 
+  const lastDataPointCoord = {
+    x: xScale(xAccessor(lastDataPoint)),
+    y: yScale(yAccessor(lastDataPoint)),
+  };
+
+  console.log({lastDataPointCoord});
+
+  // -----------------------------------------------------------------------------
+  // REFERENCE LINES - coordinates in pixels
+  // -----------------------------------------------------------------------------
+
+  console.log();
+  $: referenceLines = [
+    {
+      ref: "nearestVert",
+      x1: $nearestDataX,
+      y1: $nearestDataY,
+      x2: $nearestDataX,
+      y2: yScale.range()[0],
+    },
+    {
+      ref: "nearestHorz",
+      x1: $nearestDataX,
+      y1: $nearestDataY,
+      x2: xScale.range()[0],
+      y2: $nearestDataY,
+    },
+    {
+      ref: "lastVert",
+      x1: lastDataPointCoord.x,
+      y1: lastDataPointCoord.y,
+      x2: lastDataPointCoord.x,
+      y2: yScale.range()[0],
+    },
+    {
+      ref: "lastHorz",
+      x1: lastDataPointCoord.x,
+      y1: lastDataPointCoord.y,
+      x2: xScale.range()[0],
+      y2: lastDataPointCoord.y,
+    }
+  ];
   // -----------------------------------------------------------------------------
   // THE ARROW
   // -----------------------------------------------------------------------------
-  $: showArrow = Math.abs($nearestDataY - yScale(yAccessor(lastDataPoint))) > 30;
-
+  $: showArrow =
+    Math.abs($nearestDataY - yScale(yAccessor(lastDataPoint))) > 30;
 </script>
 
 <g transition:fade={{ duration: transitionDuration, easing: cubicIn }}>
+  <!-- REFERENCE LINES -->
+  {#each referenceLines as rl}
+    <line class="reference-line" x1={rl.x1} y1={rl.y1} x2={rl.x2} y2={rl.y2} />
+  {/each}
+
   <!-- last data point - fixed -->
-
-  <!--  horizontal reference -->
-  <line
-    class="reference-line"
-    x1={xScale(xAccessor(lastDataPoint))}
-    y1={yScale(yAccessor(lastDataPoint))}
-    x2={xScale(1959)}
-    y2={yScale(yAccessor(lastDataPoint))}
-  />
-
-  <!-- vertical reference -->
-  <line
-    class="reference-line"
-    x1={xScale(xAccessor(lastDataPoint))}
-    y1={yScale(yAccessor(lastDataPoint))}
-    x2={xScale(xAccessor(lastDataPoint))}
-    y2={yScale(0)}
-  />
-
+ 
   <rect
     class="reference-text-bg"
     x={xScale(xAccessor(lastDataPoint)) - 25}
@@ -95,15 +124,7 @@
     r={5}
     fill="black"
   />
-  <!-- nearest data point - moves with cursor -->
-  <!-- vertical reference -->
-  <line
-    class="reference-line"
-    x1={$nearestDataX}
-    y1={$nearestDataY}
-    x2={$nearestDataX}
-    y2={yScale(0)}
-  />
+
   <!-- to give text padding -->
   <rect
     class="reference-text-bg"
@@ -121,13 +142,7 @@
     text-anchor="middle">{Math.round(xScale.invert($nearestDataX))}</text
   >
   <!-- horizontal reference -->
-  <line
-    class="reference-line"
-    x1={$nearestDataX}
-    y1={$nearestDataY}
-    x2={xScale(1959)}
-    y2={$nearestDataY}
-  />
+
   <circle cx={$nearestDataX} cy={$nearestDataY} r={5} fill="black" />
 
   <!-- arrow - showing increase in emissions -->
