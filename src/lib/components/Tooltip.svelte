@@ -21,7 +21,6 @@
   // SELECTING A DATAPOINT
   // -----------------------------------------------------------------------------
   let dataPoint = data.find((d) => xAccessor(d) === xAccessor(positionOnChart));
-  console.log({ data });
 
   const transitionDuration = 200;
   const tweenedTransition = {
@@ -44,26 +43,46 @@
   let lastDataPoint = data.find(
     (d) => xAccessor(d) === max(data, (d) => xAccessor(d))
   );
-  $: console.log({ lastDataPoint });
+  // $: console.log({ lastDataPoint });
 </script>
 
 <g transition:fade={{ duration: transitionDuration, easing: cubicIn }}>
   <!-- last data point - fixed -->
 
+  <!--  horizontal reference -->
   <line
+    class="reference-line"
     x1={xScale(xAccessor(lastDataPoint))}
     y1={yScale(yAccessor(lastDataPoint))}
-    x2={xScale(1958)}
+    x2={xScale(1959)}
     y2={yScale(yAccessor(lastDataPoint))}
-    stroke="black"
   />
+
+  <!-- vertical reference -->
   <line
+    class="reference-line"
     x1={xScale(xAccessor(lastDataPoint))}
     y1={yScale(yAccessor(lastDataPoint))}
     x2={xScale(xAccessor(lastDataPoint))}
     y2={yScale(0)}
-    stroke="black"
   />
+
+  <rect
+    class="reference-text-bg"
+    x={xScale(xAccessor(lastDataPoint)) - 25}
+    y={yScale(0) + 9}
+    height={20}
+    width={50}
+    fill="white"
+  />
+  <text
+    class="reference-text"
+    x={xScale(xAccessor(lastDataPoint))}
+    y={yScale(0)}
+    dy={25}
+    text-anchor="middle">{Math.round(xAccessor(lastDataPoint))}</text
+  >
+
   <circle
     cx={xScale(xAccessor(lastDataPoint))}
     cy={yScale(yAccessor(lastDataPoint))}
@@ -71,36 +90,56 @@
     fill="black"
   />
   <!-- nearest data point - moves with cursor -->
+  <!-- vertical reference -->
   <line
+    class="reference-line"
     x1={$nearestDataX}
     y1={$nearestDataY}
     x2={$nearestDataX}
     y2={yScale(0)}
-    stroke="black"
   />
+  <!-- to give text padding -->
+  <rect
+    class="reference-text-bg"
+    x={$nearestDataX - 25}
+    y={yScale(0) + 9}
+    height={20}
+    width={50}
+    fill="white"
+  />
+  <text
+    class="reference-text"
+    x={$nearestDataX}
+    y={yScale(0)}
+    dy={25}
+    text-anchor="middle">{Math.round(xScale.invert($nearestDataX))}</text
+  >
+  <!-- horizontal reference -->
   <line
+    class="reference-line"
     x1={$nearestDataX}
     y1={$nearestDataY}
-    x2={xScale(1958)}
+    x2={xScale(1959)}
     y2={$nearestDataY}
-    stroke="black"
   />
   <circle cx={$nearestDataX} cy={$nearestDataY} r={5} fill="black" />
 
   <!-- arrow - showing increase in emissions -->
   <!-- only show if there is space for the arrow head -->
   {#if Math.abs($nearestDataY - yScale(yAccessor(lastDataPoint))) > 30}
-  <!-- transition need to be repeated within the if to apply -->
-  <g transition:fade={{ duration: transitionDuration, easing: cubicIn }}>
-      <Arrow
-        x1={xScale(2023)}
-        y1={$nearestDataY}
-        x2={xScale(2023)}
-        y2={yScale(yAccessor(lastDataPoint))}
-        arrowHeadWidth={10}
-        arrowHeadHeight={10}
-      />
-    </g>
+    <!-- transition need to be repeated within the if to apply -->
+    {#key $nearestDataY}
+      <g>
+        <Arrow
+          x1={xScale(2023)}
+          y1={$nearestDataY}
+          x2={xScale(2023)}
+          y2={yScale(yAccessor(lastDataPoint))}
+          arrowHeadWidth={10}
+          arrowHeadHeight={10}
+        />
+      </g>
+    {/key}
   {/if}
 
   <!-- try a triangle -->
@@ -113,3 +152,20 @@
     style="opacity:0.5;"
   />
 </g>
+
+<style>
+  .reference-line {
+    stroke: rgb(161, 156, 156);
+    stroke-dasharray: 5 3;
+    pointer-events: none;
+  }
+
+  .reference-text {
+    fill: rgb(161, 156, 156);
+    pointer-events: none;
+  }
+
+  .reference-text-bg {
+    pointer-events: none;
+  }
+</style>

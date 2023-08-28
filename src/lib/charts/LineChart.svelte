@@ -60,8 +60,8 @@
   const margin = {
     top: 20,
     right: 200,
-    bottom: 20,
-    left: 30,
+    bottom: 40,
+    left: 50,
   };
 
   $: innerWidth = width - margin.left - margin.right;
@@ -87,7 +87,7 @@
   // -----------------------------------------------------------------------------
   // TOOLTIP
   // -----------------------------------------------------------------------------
-  let hoveredEvent;
+  let hoveredEvent = null;
   // $: console.log(hoveredEvent);
 
   let mousePosition = {};
@@ -103,7 +103,7 @@
         total_ghg_emissions: yScale.invert(mousePosition.y),
       };
 
-      // console.log(positionOnChart);
+      console.log(mousePosition);
     }
   }
 </script>
@@ -111,7 +111,7 @@
 <!-- while waiting for data to load hold the space -->
 {#if data.length === 0}
   <svg {width} {height} />
-<!-- then create the chart -->
+  <!-- then create the chart -->
 {:else}
   <div class="chart-container" bind:clientWidth={width}>
     <svg {width} {height}>
@@ -152,8 +152,12 @@
           width={innerWidth}
           height={innerHeight}
           fill="transparent"
+          on:mouseover={(e) => (hoveredEvent = e)}
           on:mousemove={(e) => (hoveredEvent = e)}
           on:mouseleave={() => (hoveredEvent = null)}
+          on:mouseout={() => {
+            hoveredEvent = null;
+          }}
         />
       </g>
     </svg>
