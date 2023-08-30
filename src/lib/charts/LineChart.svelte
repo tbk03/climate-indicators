@@ -10,6 +10,7 @@
   import AxisY from "../components/AxisY.svelte";
   import Line from "../components/Line.svelte";
   import Tooltip from "../components/Tooltip.svelte";
+  import Annotation from "../components/Annotation.svelte";
 
   // -----------------------------------------------------------------------------
   // IMPORT AND CLEAN DATA FROM
@@ -98,14 +99,16 @@
       mousePosition.x = hoveredEvent.layerX - margin.left;
       mousePosition.y = hoveredEvent.layerY - margin.top;
 
+      let nearestYear = Math.round(xScale.invert(mousePosition.x));
       positionOnChart = {
-        year: Math.round(xScale.invert(mousePosition.x)),
-        total_ghg_emissions: yScale.invert(mousePosition.y),
+        year: nearestYear,
+        total_ghg_emissions: yAccessor(data.find(d=> xAccessor(d) === nearestYear)),
       };
 
       // console.log(mousePosition);
     }
   }
+
 </script>
 
 <!-- while waiting for data to load hold the space -->
@@ -117,14 +120,10 @@
     <svg {width} {height}>
       <!-- apply top and left margins -->
       <g class="inner-chart" transform="translate({margin.left}, {margin.top})">
-        <AxisY {yScale} {xScale} width={innerWidth} {hoveredEvent}/>
+        <AxisY {yScale} {xScale} width={innerWidth} {hoveredEvent} />
 
         {#if !hoveredEvent}
-          <AxisX
-            {xScale}
-            height={innerHeight}
-            width={innerWidth}
-          />
+          <AxisX {xScale} height={innerHeight} width={innerWidth} />
         {/if}
 
         <!-- {#each data as d}
@@ -138,7 +137,7 @@
           />
         {/each} -->
 
-        <Line {xScale} {yScale} {xAccessor} {yAccessor} {data} {hoveredEvent}/>
+        <Line {xScale} {yScale} {xAccessor} {yAccessor} {data} {hoveredEvent} />
 
         {#if hoveredEvent}
           <Tooltip
@@ -168,6 +167,9 @@
         />
       </g>
     </svg>
+    <Annotation
+       {data} {xScale} {yScale} {xAccessor} {yAccessor} {margin} {positionOnChart}
+    />
   </div>
 {/if}
 
@@ -182,5 +184,6 @@
 
   .chart-container {
     max-width: 1000px;
+    position: relative;
   }
 </style>
