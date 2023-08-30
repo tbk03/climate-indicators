@@ -110,6 +110,7 @@
         dy: 25,
         textAnchor: "middle",
         dominantBaseline: "auto",
+        visible: true,
       },
       {
         ref: "x-last",
@@ -120,6 +121,8 @@
         dy: 25,
         textAnchor: "middle",
         dominantBaseline: "auto",
+        visible:
+          Math.abs(lastDataPointCoord.x - $nearestDataX) < 30 ? false : true,
       },
       {
         ref: "y-nearest",
@@ -130,6 +133,7 @@
         dy: 0,
         textAnchor: "end",
         dominantBaseline: "middle",
+        visible: true,
       },
       {
         ref: "y-last",
@@ -140,21 +144,13 @@
         dy: 0,
         textAnchor: "end",
         dominantBaseline: "middle",
+        visible:
+          Math.abs(lastDataPointCoord.y - $nearestDataY) < 20 ? false : true,
       },
     ];
   }
 
-  function getTextLabel(textLabels, ref) {
-    return textLabels.find((d) => d.ref === ref);
-  }
-
-  $: lastXLabel = getTextLabel(textLabels, "x-last");
-  $: showLastXLabel =
-    Math.abs(lastDataPointCoord.x - $nearestDataX) < 30 ? false : true;
-  $: lastYLabel = getTextLabel(textLabels, "y-last");
-  $: showLastYLabel =
-    Math.abs(lastDataPointCoord.y - $nearestDataY) < 20 ? false : true;
-
+ 
   // -----------------------------------------------------------------------------
   // THE ARROW
   // -----------------------------------------------------------------------------
@@ -185,40 +181,26 @@
     {/each}
   </g>
 
-  <!-- Text labels for mouse crosshair -->
+  <!-- Text labels for crosshairs -->
   <g class="text-labels">
-    {#each textLabels.filter((d) => d.ref === "x-nearest" || d.ref === "y-nearest") as tl}
-      <text
-        class="reference-text"
-        x={tl.x}
-        y={tl.y}
-        dx={tl.dx}
-        dy={tl.dy}
-        text-anchor={tl.textAnchor}
-        dominant-baseline={tl.dominantBaseline}
-      >
-        {Math.round(tl.text)}
-      </text>
+    {#each textLabels as tl}
+      {#if tl.visible}
+        <text
+          class="reference-text"
+          x={tl.x}
+          y={tl.y}
+          dx={tl.dx}
+          dy={tl.dy}
+          text-anchor={tl.textAnchor}
+          dominant-baseline={tl.dominantBaseline}
+          transition:fade={{ duration: transitionDuration, easing: cubicIn }}
+        >
+          {Math.round(tl.text)}
+        </text>
+      {/if}
     {/each}
   </g>
 
-  <!-- Text labels for last point cross hair -->
-  <g class="text-labels">
-    {#if showLastXLabel}
-      <text
-        class="reference-text"
-        x={lastXLabel.x}
-        y={lastXLabel.y}
-        dx={lastXLabel.dx}
-        dy={lastXLabel.dy}
-        text-anchor={lastXLabel.textAnchor}
-        dominant-baseline={lastXLabel.dominantBaseline}
-        transition:fade={{ duration: transitionDuration, easing: cubicIn }}
-      >
-        >{Math.round(lastXLabel.text)}</text
-      >
-    {/if}
-  </g>
 
   {#if showArrow}
     <!-- transition need to be repeated within the if to apply -->
