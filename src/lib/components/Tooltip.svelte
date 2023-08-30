@@ -62,7 +62,7 @@
       x1: $nearestDataX,
       y1: $nearestDataY,
       x2: $nearestDataX,
-      y2: yScale.range()[0],
+      y2: yScale.range()[0] + 10,
     },
     {
       ref: "nearestHorz",
@@ -76,7 +76,7 @@
       x1: lastDataPointCoord.x,
       y1: lastDataPointCoord.y,
       x2: lastDataPointCoord.x,
-      y2: yScale.range()[0],
+      y2: yScale.range()[0] + 10,
     },
     {
       ref: "lastHorz",

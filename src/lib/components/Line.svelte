@@ -5,6 +5,7 @@
   export let yAccessor;
   export let data;
   export let color = "black";
+  export let hoveredEvent;
 
   // D3.js
   import { line, curveNatural } from "d3-shape";
@@ -18,13 +19,20 @@
     // @ts-ignore
     .x((d) => xScale(xAccessor(d)))
     .y((d) => yScale(yAccessor(d)))(data);
-
 </script>
 
-<path d={line_gen} stroke={color}/>
+<path
+  class="line"
+  d={line_gen}
+  stroke={color}
+  opacity={hoveredEvent ? 0.5 : 1}
+/>
 
 <style>
-    path {
-        fill: transparent;
-    }
+  path {
+    fill: transparent;
+    transition-property: opacity;
+    transition-duration: 1500ms;
+    transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
 </style>

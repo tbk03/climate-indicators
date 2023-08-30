@@ -117,8 +117,15 @@
     <svg {width} {height}>
       <!-- apply top and left margins -->
       <g class="inner-chart" transform="translate({margin.left}, {margin.top})">
-        <AxisY {yScale} {xScale} width={innerWidth} />
-        <AxisX {xScale} height={innerHeight} width={innerWidth} />
+        <AxisY {yScale} {xScale} width={innerWidth} {hoveredEvent}/>
+
+        {#if !hoveredEvent}
+          <AxisX
+            {xScale}
+            height={innerHeight}
+            width={innerWidth}
+          />
+        {/if}
 
         <!-- {#each data as d}
           <circle
@@ -131,7 +138,7 @@
           />
         {/each} -->
 
-        <Line {xScale} {yScale} {xAccessor} {yAccessor} {data} />
+        <Line {xScale} {yScale} {xAccessor} {yAccessor} {data} {hoveredEvent}/>
 
         {#if hoveredEvent}
           <Tooltip
