@@ -9,6 +9,7 @@
 
   // LOCAL COMPONENTS
   import Arrow from "./Arrow.svelte";
+  import { get } from "svelte/store";
 
   export let positionOnChart;
   export let xScale;
@@ -97,56 +98,63 @@
   // -----------------------------------------------------------------------------
   // TEXT LABELS - coordinates in pixels
   // -----------------------------------------------------------------------------
-  $: textLabels = [
-    {
-      ref: "x-nearest",
-      text: xScale.invert($nearestDataX),
-      x: $nearestDataX,
-      y: yScale(0),
-      dx: 0,
-      dy: 25,
-      textAnchor: "middle",
-      dominantBaseline: "auto",
-      visible: true,
-    },
-    {
-      ref: "x-last",
-      text: xScale.invert(lastDataPointCoord.x),
-      x: lastDataPointCoord.x,
-      y: yScale(0),
-      dx: 0,
-      dy: 25,
-      textAnchor: "middle",
-      dominantBaseline: "auto",
-      visible:
-        Math.abs(lastDataPointCoord.x - $nearestDataX) < 30 ? false : true,
-    },
-    {
-      ref: "y-nearest",
-      text: yScale.invert($nearestDataY),
-      x: xScale.range()[0],
-      y: $nearestDataY,
-      dx: -5,
-      dy: 0,
-      textAnchor: "end",
-      dominantBaseline: "middle",
-      visible: true,
-    },
-    {
-      ref: "y-last",
-      text: yScale.invert(lastDataPointCoord.y),
-      x: xScale.range()[0],
-      y: lastDataPointCoord.y,
-      dx: -5,
-      dy: 0,
-      textAnchor: "end",
-      dominantBaseline: "middle",
-      visible:
-        Math.abs(lastDataPointCoord.y - $nearestDataY) < 20 ? false : true,
-    },
-  ];
+  let textLabels = [];
+  $: {
+    textLabels = [
+      {
+        ref: "x-nearest",
+        text: xScale.invert($nearestDataX),
+        x: $nearestDataX,
+        y: yScale(0),
+        dx: 0,
+        dy: 25,
+        textAnchor: "middle",
+        dominantBaseline: "auto",
+      },
+      {
+        ref: "x-last",
+        text: xScale.invert(lastDataPointCoord.x),
+        x: lastDataPointCoord.x,
+        y: yScale(0),
+        dx: 0,
+        dy: 25,
+        textAnchor: "middle",
+        dominantBaseline: "auto",
+      },
+      {
+        ref: "y-nearest",
+        text: yScale.invert($nearestDataY),
+        x: xScale.range()[0],
+        y: $nearestDataY,
+        dx: -5,
+        dy: 0,
+        textAnchor: "end",
+        dominantBaseline: "middle",
+      },
+      {
+        ref: "y-last",
+        text: yScale.invert(lastDataPointCoord.y),
+        x: xScale.range()[0],
+        y: lastDataPointCoord.y,
+        dx: -5,
+        dy: 0,
+        textAnchor: "end",
+        dominantBaseline: "middle",
+      },
+    ];
+  }
 
-  $: console.log(xScale(0));
+  function getTextLabel(textLabels, ref) {
+    return textLabels.find((d) => d.ref === ref);
+  }
+
+  $: lastXLabel = getTextLabel(textLabels, "x-last");
+  $: showLastXLabel =
+    Math.abs(lastDataPointCoord.x - $nearestDataX) < 30 ? false : true;
+  $: lastYLabel = getTextLabel(textLabels, "y-last");
+  $: showLastYLabel =
+    Math.abs(lastDataPointCoord.y - $nearestDataY) < 20 ? false : true;
+
   // -----------------------------------------------------------------------------
   // THE ARROW
   // -----------------------------------------------------------------------------
@@ -177,10 +185,9 @@
     {/each}
   </g>
 
-  <!-- last data point - fixed -->
-
+  <!-- Text labels for mouse crosshair -->
   <g class="text-labels">
-    {#each textLabels as tl}
+    {#each textLabels.filter((d) => d.ref === "x-nearest" || d.ref === "y-nearest") as tl}
       <text
         class="reference-text"
         x={tl.x}
@@ -190,29 +197,41 @@
         text-anchor={tl.textAnchor}
         dominant-baseline={tl.dominantBaseline}
       >
-        {#if tl.visible}
-          {#key tl.visible}
-            {Math.round(tl.text)}
-          {/key}
-        {/if}
+        {Math.round(tl.text)}
       </text>
     {/each}
   </g>
 
+  <!-- Text labels for last point cross hair -->
+  <g class="text-labels">
+    {#if showLastXLabel}
+      <text
+        class="reference-text"
+        x={lastXLabel.x}
+        y={lastXLabel.y}
+        dx={lastXLabel.dx}
+        dy={lastXLabel.dy}
+        text-anchor={lastXLabel.textAnchor}
+        dominant-baseline={lastXLabel.dominantBaseline}
+        transition:fade={{ duration: transitionDuration, easing: cubicIn }}
+      >
+        >{Math.round(lastXLabel.text)}</text
+      >
+    {/if}
+  </g>
+
   {#if showArrow}
     <!-- transition need to be repeated within the if to apply -->
-    {#key showArrow}
-      <g>
-        <Arrow
-          x1={xScale(2023)}
-          y1={$nearestDataY}
-          x2={xScale(2023)}
-          y2={yScale(yAccessor(lastDataPoint))}
-          arrowHeadWidth={10}
-          arrowHeadHeight={10}
-        />
-      </g>
-    {/key}
+    <g transition:fade={{ duration: transitionDuration, easing: cubicIn }}>
+      <Arrow
+        x1={xScale(2023)}
+        y1={$nearestDataY}
+        x2={xScale(2023)}
+        y2={yScale(yAccessor(lastDataPoint))}
+        arrowHeadWidth={10}
+        arrowHeadHeight={10}
+      />
+    </g>
   {/if}
 
   <!-- try a triangle -->
