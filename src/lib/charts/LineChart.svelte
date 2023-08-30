@@ -102,13 +102,14 @@
       let nearestYear = Math.round(xScale.invert(mousePosition.x));
       positionOnChart = {
         year: nearestYear,
-        total_ghg_emissions: yAccessor(data.find(d=> xAccessor(d) === nearestYear)),
+        total_ghg_emissions: yAccessor(
+          data.find((d) => xAccessor(d) === nearestYear)
+        ),
       };
 
       // console.log(mousePosition);
     }
   }
-
 </script>
 
 <!-- while waiting for data to load hold the space -->
@@ -167,9 +168,17 @@
         />
       </g>
     </svg>
-    <Annotation
-       {data} {xScale} {yScale} {xAccessor} {yAccessor} {margin} {positionOnChart}
-    />
+    {#if hoveredEvent}
+      <Annotation
+        {data}
+        {xScale}
+        {yScale}
+        {xAccessor}
+        {yAccessor}
+        {margin}
+        {positionOnChart}
+      />
+    {/if}
   </div>
 {/if}
 
