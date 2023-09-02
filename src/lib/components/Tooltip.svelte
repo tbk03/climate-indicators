@@ -67,7 +67,7 @@
     },
     {
       ref: "nearestHorz",
-      x1: $nearestDataX,
+      x1: lastDataPointCoord.x,
       y1: $nearestDataY,
       x2: xScale.range()[0],
       y2: $nearestDataY,
@@ -242,13 +242,13 @@
   /> -->
 
       <!-- basically need an svg shape morph I think -->
-    <path
+    <!-- <path
       class="area"
       d={areaGen}
       stroke={"black"}
       stroke-width={3}
       opacity={1}
-    />
+    /> -->
 </g>
 
 <style>
