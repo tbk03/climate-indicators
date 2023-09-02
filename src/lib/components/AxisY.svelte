@@ -34,7 +34,7 @@
         y1={0}
         y2={0}
         opacity={hoveredEvent ? 0.4 : 1}
-        stroke={index === 0 ? "#8f8f8f" : "#e5e7eb"}
+        stroke={index === 0 ? "#757373" : "#E7E5E4"}
         class="y-grid"
       />
       {#if !hoveredEvent}

@@ -82,7 +82,7 @@
   // -----------------------------------------------------------------------------
 
   $: xScale = scaleLinear()
-    .domain(extent(data, (d) => xAccessor(d)))
+    .domain([1958, max(data, (d) => xAccessor(d))])
     .range([0, innerWidth]);
 
   $: yScale = scaleLinear()
