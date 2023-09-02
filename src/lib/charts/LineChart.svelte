@@ -12,6 +12,10 @@
   import Tooltip from "../components/Tooltip.svelte";
   import Annotation from "../components/Annotation.svelte";
 
+  // fonts
+  import "@fontsource/lato/400.css";
+  import "@fontsource/lato/700.css";
+
   // -----------------------------------------------------------------------------
   // IMPORT AND CLEAN DATA FROM
   // -----------------------------------------------------------------------------
@@ -185,10 +189,22 @@
 <p>Line Chart</p>
 
 <style>
-  :global(.tick text, .axis-title) {
+
+  /* SAME FONT AND COLOR - axis labels, tooltip axis references, axis tick labels */
+  :global(.axis-label, .tick text, .tt-reference-text, .annotation){
+    font-family: "Lato", sans-serif;
+    fill: hsla(178, 16%, 13%, 1);
+  }
+
+  /* SIZES AND WEIGHTS ARE DIFFERENT */
+  :global(.tick text) {
     font-weight: 400; /* How thick our text is */
-    font-size: 12px; /* How big our text is */
-    fill: hsla(212, 10%, 53%, 1); /* The color of our text */
+    font-size: 14px; /* How big our text is */
+  }
+
+  :global(.tt-reference-text){
+    font-size: 16px;
+    font-weight: 700;
   }
 
   .chart-container {

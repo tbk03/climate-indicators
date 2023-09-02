@@ -186,7 +186,7 @@
     {#each textLabels as tl}
       {#if tl.visible}
         <text
-          class="reference-text"
+          class="tt-reference-text"
           x={tl.x}
           y={tl.y}
           dx={tl.dx}
@@ -234,8 +234,7 @@
     pointer-events: none;
   }
 
-  .reference-text {
-    fill: rgb(161, 156, 156);
+  .tt-reference-text {
     pointer-events: none;
   }
 </style>
