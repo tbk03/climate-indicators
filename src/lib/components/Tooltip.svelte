@@ -6,6 +6,7 @@
 
   // D3.js
   import { max } from "d3-array";
+  import { line, area, curveNatural } from "d3-shape";
 
   // LOCAL COMPONENTS
   import Arrow from "./Arrow.svelte";
@@ -150,13 +151,28 @@
     ];
   }
 
- 
   // -----------------------------------------------------------------------------
   // THE ARROW
   // -----------------------------------------------------------------------------
   const minArrowLength = 30; //px
   $: showArrow =
     Math.abs($nearestDataY - lastDataPointCoord.y) > minArrowLength;
+
+  // -----------------------------------------------------------------------------
+  // THE ARROW
+  // -----------------------------------------------------------------------------
+
+  $: tooltipData = data
+    // remove data before the tooltip
+    .filter((d) => xAccessor(d) >= xScale.invert($nearestDataX))
+    .filter((d) => yAccessor(d) >= yScale.invert($nearestDataY));
+
+  $: areaGen = area()
+    .curve(curveNatural)
+    // @ts-ignore
+    .x((d) => xScale(xAccessor(d)))
+    .y0($nearestDataY)
+    .y1((d) => yScale(yAccessor(d)))(tooltipData);
 </script>
 
 <!-- TOOLTIP GROUP -->
@@ -201,7 +217,6 @@
     {/each}
   </g>
 
-
   {#if showArrow}
     <!-- transition need to be repeated within the if to apply -->
     <g transition:fade={{ duration: transitionDuration, easing: cubicIn }}>
@@ -217,14 +232,23 @@
   {/if}
 
   <!-- try a triangle -->
-  <polygon
+  <!-- <polygon
     points="{$nearestDataX},{$nearestDataY} {xScale(
       xAccessor(lastDataPoint)
     )},{yScale(yAccessor(lastDataPoint))} {xScale(
       xAccessor(lastDataPoint)
     )}, {$nearestDataY}"
     style="opacity:0.5;"
-  />
+  /> -->
+
+      <!-- basically need an svg shape morph I think -->
+    <path
+      class="area"
+      d={areaGen}
+      stroke={"black"}
+      stroke-width={3}
+      opacity={1}
+    />
 </g>
 
 <style>
@@ -236,5 +260,9 @@
 
   .tt-reference-text {
     pointer-events: none;
+  }
+
+  .area{
+    transition: d all 1000ms;
   }
 </style>
