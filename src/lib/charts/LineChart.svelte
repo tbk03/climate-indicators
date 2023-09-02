@@ -152,6 +152,8 @@
             {data}
             {xAccessor}
             {yAccessor}
+            width={innerWidth}
+            height={innerHeight}
           />
         {/if}
 

@@ -18,6 +18,10 @@
   export let xAccessor;
   export let yAccessor;
   export let data;
+  export let width;
+  export let height;
+
+  console.log({width, height});
 
   // -----------------------------------------------------------------------------
   // SELECTING A DATAPOINT
@@ -52,7 +56,7 @@
     y: yScale(yAccessor(lastDataPoint)),
   };
 
-  console.log({ lastDataPointCoord });
+  console.log(xScale.range()[1]);
 
   // -----------------------------------------------------------------------------
   // REFERENCE LINES - coordinates in pixels
@@ -162,20 +166,17 @@
   // THE ARROW
   // -----------------------------------------------------------------------------
 
-  $: tooltipData = data
-    // remove data before the tooltip
-    .filter((d) => xAccessor(d) >= xScale.invert($nearestDataX))
-    .filter((d) => yAccessor(d) >= yScale.invert($nearestDataY));
-
   $: areaGen = area()
     .curve(curveNatural)
     // @ts-ignore
     .x((d) => xScale(xAccessor(d)))
-    .y0($nearestDataY)
-    .y1((d) => yScale(yAccessor(d)))(tooltipData);
+    .y0(yScale(0))
+    .y1((d) => yScale(yAccessor(d)))(data);
+
 </script>
 
 <!-- TOOLTIP GROUP -->
+
 <g transition:fade={{ duration: transitionDuration, easing: cubicIn }}>
   <!-- REFERENCE LINES -->
   <g class="reference-lines">
@@ -241,15 +242,25 @@
     style="opacity:0.5;"
   /> -->
 
-      <!-- basically need an svg shape morph I think -->
-    <!-- <path
-      class="area"
-      d={areaGen}
-      stroke={"black"}
-      stroke-width={3}
-      opacity={1}
-    /> -->
+  <path
+    class="area"
+    d={areaGen}
+    fill="#C94A54"
+    stroke="#C94A54"
+    stroke-width={3}
+    opacity={1}
+    mask="url(#hide-area)"
+  />
 </g>
+
+<defs>
+  <mask id="hide-area">
+    <rect x="0" y="0" {width} {height} fill="white" />
+
+    <rect x={0} y={0} width={$nearestDataX} height={height} fill="black" />
+    <rect x={0} y={$nearestDataY} width={width} height={height - $nearestDataY} fill="black" />
+  </mask>
+</defs>
 
 <style>
   .reference-line {
@@ -262,7 +273,7 @@
     pointer-events: none;
   }
 
-  .area{
+  .area {
     transition: d all 1000ms;
   }
 </style>
