@@ -62,7 +62,7 @@
       x1: $nearestDataX,
       y1: $nearestDataY,
       x2: $nearestDataX,
-      y2: yScale.range()[0] + 10,
+      y2: yScale.range()[0] + 5,
     },
     {
       ref: "nearestHorz",
@@ -76,7 +76,7 @@
       x1: lastDataPointCoord.x,
       y1: lastDataPointCoord.y,
       x2: lastDataPointCoord.x,
-      y2: yScale.range()[0] + 10,
+      y2: yScale.range()[0] + 5,
     },
     {
       ref: "lastHorz",
@@ -107,7 +107,7 @@
         x: $nearestDataX,
         y: yScale(0),
         dx: 0,
-        dy: 25,
+        dy: 21,
         textAnchor: "middle",
         dominantBaseline: "auto",
         visible: true,
@@ -118,7 +118,7 @@
         x: lastDataPointCoord.x,
         y: yScale(0),
         dx: 0,
-        dy: 25,
+        dy: 21,
         textAnchor: "middle",
         dominantBaseline: "auto",
         visible:
@@ -206,9 +206,9 @@
     <!-- transition need to be repeated within the if to apply -->
     <g transition:fade={{ duration: transitionDuration, easing: cubicIn }}>
       <Arrow
-        x1={xScale(2023)}
+        x1={xScale(2022.2)}
         y1={$nearestDataY}
-        x2={xScale(2023)}
+        x2={xScale(2022.2)}
         y2={yScale(yAccessor(lastDataPoint))}
         arrowHeadWidth={10}
         arrowHeadHeight={10}

@@ -18,7 +18,14 @@
 </script>
 
 <g class="axis-y">
-  <text class="axis-label">Gt CO2e</text>
+  <text class="axis-label" y="-20">
+    <tspan class="axis-label-variable">GLOBAL CARBON EMISSIONS</tspan>
+  </text>
+  <text y="0">
+    <tspan class="units">Gt CO</tspan><tspan dy="0.2em" font-size=".6em"
+      >2</tspan
+    ><tspan dy="-0.2em" font-size="1em">e</tspan></text
+  >
   {#each yTicks as tick, index}
     <g class="tick" transform="translate(0, {yScale(tick)})">
       <line
@@ -45,9 +52,19 @@
 </g>
 
 <style>
-  .y-grid{
+  .y-grid {
     transition-property: opacity;
     transition-duration: 1500ms;
     transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .axis-label-variable {
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .units {
+    font-weight: 400;
+    font-size: 14px;
   }
 </style>

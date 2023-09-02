@@ -60,10 +60,10 @@
   // DIMENSIONS AND LAYOUT
   // -----------------------------------------------------------------------------
   let width = 400;
-  let height = 400;
+  let height = 500;
 
   const margin = {
-    top: 20,
+    top: 60,
     right: 200,
     bottom: 40,
     left: 50,
@@ -86,7 +86,7 @@
     .range([0, innerWidth]);
 
   $: yScale = scaleLinear()
-    .domain([0, max(data, (d) => yAccessor(d))])
+    .domain([0, max(data, (d) => yAccessor(d)) + 2])
     .range([innerHeight, 0]);
 
   // -----------------------------------------------------------------------------
@@ -191,7 +191,7 @@
 <style>
 
   /* SAME FONT AND COLOR - axis labels, tooltip axis references, axis tick labels */
-  :global(.axis-label, .tick text, .tt-reference-text, .annotation){
+  :global(.axis-label, .tick text, .tt-reference-text, .annotation, .units){
     font-family: "Lato", sans-serif;
     fill: hsla(178, 16%, 13%, 1);
   }
