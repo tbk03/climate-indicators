@@ -28,14 +28,18 @@
     .y1((d) => yScale(yAccessor(d)))(data);
 </script>
 
-
-<path d={areaGen} fill="#EAC8CA" stroke="none" opacity="0.3"/>
+<path
+  d={areaGen}
+  fill="#EAC8CA"
+  stroke="none"
+  opacity={hoveredEvent ? 0.15 : 0.4}
+/>
 <path
   class="line"
   d={lineGen}
   stroke={color}
   stroke-width={3}
-  opacity={hoveredEvent ? 0.2 : 1}
+  opacity={hoveredEvent ? 0.35 : 1}
 />
 
 <style>
