@@ -2,7 +2,7 @@
   // D3
   import { csv } from "d3-fetch";
   import { scaleLinear } from "d3-scale";
-  import { extent, max } from "d3-array";
+  import { extent, max, min } from "d3-array";
 
   // tidy-js
   import { tidy, mutate, filter } from "@tidyjs/tidy";
@@ -103,7 +103,11 @@
       mousePosition.x = hoveredEvent.layerX - margin.left;
       mousePosition.y = hoveredEvent.layerY - margin.top;
 
+      // is mouse within chart but outside the coverage of the data
+
       let nearestYear = Math.round(xScale.invert(mousePosition.x));
+      let minYear = min(data, (d) => xAccessor(d));
+      nearestYear =  nearestYear >= minYear ? nearestYear : minYear;
       positionOnChart = {
         year: nearestYear,
         total_ghg_emissions: yAccessor(
