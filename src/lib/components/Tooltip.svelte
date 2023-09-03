@@ -241,11 +241,12 @@
     )}, {$nearestDataY}"
     style="opacity:0.5;"
   /> -->
-
+  <!-- fill="#C94A54" -->
   <path
     class="area"
     d={areaGen}
-    fill="#C94A54"
+    
+    fill="url(#Gradient2)"
     stroke="#C94A54"
     stroke-width={3}
     opacity={1}
@@ -257,9 +258,20 @@
   <mask id="hide-area">
     <rect x="0" y="0" {width} {height} fill="white" />
 
+    <!-- vertical mask -->
     <rect x={0} y={0} width={$nearestDataX} height={height} fill="black" />
-    <rect x={0} y={$nearestDataY} width={width} height={height - $nearestDataY} fill="black" />
+    <!-- horizontal mask -->
+    <!-- orginally height={height-$nearestDataY} -->
+    <!-- but this caused issues when exiting quickly on the right of the chart -->
+    <!-- in that case the mask was the wrong shape -->
+    <rect x={0} y={$nearestDataY} width={width} height={height} fill="black" />
   </mask>
+
+  <linearGradient id="Gradient2" x1="0" x2="0" y1="0" y2="1">
+    <stop offset="0%" stop-color="#C94A54" />
+    <stop offset="80%" stop-color="white" />
+    <stop offset="100%" stop-color="white" />
+  </linearGradient>
 </defs>
 
 <style>

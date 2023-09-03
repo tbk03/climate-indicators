@@ -104,7 +104,6 @@
       mousePosition.y = hoveredEvent.layerY - margin.top;
 
       // is mouse within chart but outside the coverage of the data
-
       let nearestYear = Math.round(xScale.invert(mousePosition.x));
       let minYear = min(data, (d) => xAccessor(d));
       nearestYear =  nearestYear >= minYear ? nearestYear : minYear;
