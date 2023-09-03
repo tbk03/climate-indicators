@@ -30,9 +30,9 @@
 
 <path
   d={areaGen}
-  fill="#EAC8CA"
+  fill="url(#area-gradient)"
   stroke="none"
-  opacity={hoveredEvent ? 0.15 : 0.4}
+  opacity={hoveredEvent ? 0.15 : 0.3}
 />
 <path
   class="line"
@@ -41,6 +41,12 @@
   stroke-width={3}
   opacity={hoveredEvent ? 0.35 : 1}
 />
+<defs>
+  <linearGradient id="area-gradient" x1="0" x2="0" y1="0" y2="1">
+    <stop offset="0%" stop-color="#D19499" />
+    <stop offset="100%" stop-color="#F8F1F4" />
+  </linearGradient>
+</defs>
 
 <style>
   .line {

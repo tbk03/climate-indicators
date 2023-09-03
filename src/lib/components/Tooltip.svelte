@@ -191,14 +191,7 @@
     {/each}
   </g>
 
-  <!-- CIRCLES -->
-  <g class="circles">
-    {#each circles as c}
-      <circle cx={c.cx} cy={c.cy} r={5} fill="black" />
-    {/each}
-  </g>
-
-  <!-- Text labels for crosshairs -->
+    <!-- Text labels for crosshairs -->
   <g class="text-labels">
     {#each textLabels as tl}
       {#if tl.visible}
@@ -232,26 +225,22 @@
     </g>
   {/if}
 
-  <!-- try a triangle -->
-  <!-- <polygon
-    points="{$nearestDataX},{$nearestDataY} {xScale(
-      xAccessor(lastDataPoint)
-    )},{yScale(yAccessor(lastDataPoint))} {xScale(
-      xAccessor(lastDataPoint)
-    )}, {$nearestDataY}"
-    style="opacity:0.5;"
-  /> -->
-  <!-- fill="#C94A54" -->
   <path
     class="area"
     d={areaGen}
     
-    fill="url(#Gradient2)"
+    fill="url(#tt-area-gradient)"
     stroke="#C94A54"
     stroke-width={3}
     opacity={1}
     mask="url(#hide-area)"
   />
+  <!-- CIRCLES -->
+  <g class="circles">
+    {#each circles as c}
+      <circle cx={c.cx} cy={c.cy} r={5}/>
+    {/each}
+  </g>
 </g>
 
 <defs>
@@ -267,7 +256,7 @@
     <rect x={0} y={$nearestDataY} width={width} height={height} fill="black" />
   </mask>
 
-  <linearGradient id="Gradient2" x1="0" x2="0" y1="0" y2="1">
+  <linearGradient id="tt-area-gradient" x1="0" x2="0" y1="0" y2="1">
     <stop offset="0%" stop-color="#C94A54" />
     <stop offset="80%" stop-color="white" />
     <stop offset="100%" stop-color="white" />
@@ -276,7 +265,7 @@
 
 <style>
   .reference-line {
-    stroke: rgb(161, 156, 156);
+    stroke: #757373;
     stroke-dasharray: 5 3;
     pointer-events: none;
   }
@@ -286,6 +275,11 @@
   }
 
   .area {
-    transition: d all 1000ms;
+    transition: d all 500ms;
+  }
+
+  .circles {
+    fill: #757373;
+    stroke: none;
   }
 </style>
