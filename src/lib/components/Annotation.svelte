@@ -1,5 +1,6 @@
 <script>
   import { max } from "d3-array";
+  import { fade } from "svelte/transition";
 
   export let data;
   export let xAccessor;
@@ -14,7 +15,7 @@
   );
 
   $: position = {
-    x: xScale(xAccessor(lastDataPoint)) + margin.left + 30,
+    x: xScale(xAccessor(lastDataPoint)) + margin.left + 5,
     y: yScale(yAccessor(lastDataPoint)) + margin.top,
   };
 
@@ -39,17 +40,68 @@
   }
 </script>
 
-<div class="annotation" style="top: {position.y}px; left: {position.x}px;">
-  <span>{Math.abs(percentageChange.toFixed())}</span>%
-  <p>
-    {changeDescriptor} in emissions between {xAccessor(positionOnChart)} and {xAccessor(
-      lastDataPoint
-    )}
-  </p>
+<div class="annotation" style="top: {position.y}px; left: {position.x}px;" transition:fade>
+  <div
+    class="percent"
+    style="color: {percentageChange > 0 ? '#c94a54' : '#374E83'};"
+  >
+    <span
+      class={`triangle ${percentageChange > 0 ? "up" : "down"}`}
+      style="border-color: {percentageChange > 0
+        ? 'transparent transparent #c94a54 transparent'
+        : 'transparent transparent #374E83 transparent'};"
+    />
+    <span class="percent-value">{Math.abs(percentageChange.toFixed())}%</span>
+  </div>
+  <!-- <p>
+    {changeDescriptor} between
+    <span class="year">{xAccessor(positionOnChart)}</span> &
+    <span class="year">{xAccessor(lastDataPoint)}</span>
+  </p>  -->
 </div>
 
 <style>
+  .triangle {
+    width: 0px;
+    height: 0px;
+    border-style: solid;
+    border-width: 0 8px 13.9px 8px;
+
+    transform: rotate(0deg);
+  }
+
+  .up {
+    transform: rotate(0deg);
+  }
+  .down {
+    transform: rotate(180deg);
+  }
+
   .annotation {
     position: absolute;
+    color: #2c3130;
+    padding: 0 0 0 0;
+    margin: 0 30px 0 5px;
+    font-size: 16px;
+    text-align: center;
+  }
+
+  div.percent {
+    width: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin: 0;
+    padding: 15px 10px 15px 10px;
+    border-radius: 5px;
+    background: rgba(209, 148, 153, 20%);
+    background: linear-gradient(
+      164deg,
+      rgba(209, 148, 153, 20%) 0%,
+      rgba(248, 241, 244, 20%) 100%
+    );
+    font-weight: 700;
+    font-size: 30px;
+    box-shadow: 2px 3px 3px rgba(209, 148, 153, 50%);
   }
 </style>

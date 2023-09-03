@@ -64,7 +64,7 @@
 
   const margin = {
     top: 60,
-    right: 200,
+    right: 160,
     bottom: 40,
     left: 50,
   };
@@ -178,6 +178,7 @@
       </g>
     </svg>
     {#if hoveredEvent}
+    <!-- {#if true} -->
       <Annotation
         {data}
         {xScale}

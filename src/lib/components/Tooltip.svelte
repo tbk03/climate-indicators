@@ -97,7 +97,7 @@
   // -----------------------------------------------------------------------------
   $: circles = [
     { ref: "nearest", cx: $nearestDataX, cy: $nearestDataY },
-    { ref: "last", cx: lastDataPointCoord.x, cy: lastDataPointCoord.y },
+    // { ref: "last", cx: lastDataPointCoord.x, cy: lastDataPointCoord.y },
   ];
 
   // -----------------------------------------------------------------------------
@@ -211,19 +211,19 @@
     {/each}
   </g>
 
-  {#if showArrow}
+  <!-- {#if showArrow} -->
     <!-- transition need to be repeated within the if to apply -->
-    <g transition:fade={{ duration: transitionDuration, easing: cubicIn }}>
+    <!-- <g transition:fade={{ duration: transitionDuration, easing: cubicIn }}>
       <Arrow
-        x1={xScale(2022.2)}
+        x1={xScale(2021) + 18}
         y1={$nearestDataY}
-        x2={xScale(2022.2)}
+        x2={xScale(2021) + 18}
         y2={yScale(yAccessor(lastDataPoint))}
         arrowHeadWidth={10}
         arrowHeadHeight={10}
       />
     </g>
-  {/if}
+  {/if} -->
 
   <path
     class="area"
@@ -238,7 +238,7 @@
   <!-- CIRCLES -->
   <g class="circles">
     {#each circles as c}
-      <circle cx={c.cx} cy={c.cy} r={5}/>
+      <circle cx={c.cx} cy={c.cy} r={6}/>
     {/each}
   </g>
 </g>
@@ -279,7 +279,9 @@
   }
 
   .circles {
-    fill: #757373;
-    stroke: none;
+    fill: white;
+    stroke: #757373;
+    stroke-width: 3;
+    filter: drop-shadow(2px 2px 2px rgba(75, 73, 73, 75%));
   }
 </style>
