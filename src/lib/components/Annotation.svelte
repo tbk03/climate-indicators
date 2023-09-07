@@ -9,13 +9,18 @@
   export let yScale;
   export let margin;
   export let positionOnChart;
+  export let width;
+  export let widthThreshold;
 
   $: lastDataPoint = data.find(
     (d) => xAccessor(d) === max(data, (d) => xAccessor(d))
   );
 
   $: position = {
-    x: xScale(xAccessor(lastDataPoint)) + margin.left + 5,
+    x:
+      width > widthThreshold
+        ? xScale(xAccessor(lastDataPoint)) + margin.left + 5
+        : margin.left + xScale(1963), // choose a point where the tooltip appears of small screens
     y: yScale(yAccessor(lastDataPoint)) + margin.top,
   };
 
@@ -40,7 +45,11 @@
   }
 </script>
 
-<div class="annotation" style="top: {position.y}px; left: {position.x}px;" transition:fade>
+<div
+  class="annotation"
+  style="top: {position.y}px; left: {position.x}px;"
+  transition:fade
+>
   <div
     class="percent"
     style="color: {percentageChange > 0 ? '#c94a54' : '#374E83'};"
@@ -84,6 +93,8 @@
     margin: 0 30px 0 5px;
     font-size: 16px;
     text-align: center;
+    z-index: 0;
+    pointer-events: none;
   }
 
   div.percent {
@@ -97,8 +108,8 @@
     background: rgba(209, 148, 153, 20%);
     background: linear-gradient(
       164deg,
-      rgba(209, 148, 153, 20%) 0%,
-      rgba(248, 241, 244, 20%) 100%
+      rgba(247, 238, 239, 100%) 0%,
+      rgba(252, 249, 250, 100%) 100%
     );
     font-weight: 700;
     font-size: 30px;

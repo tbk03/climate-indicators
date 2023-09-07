@@ -62,9 +62,13 @@
   let width = 400;
   let height = 500;
 
-  const margin = {
+  const widthThreshold = 600;
+  let marginRightWideScreen = 160;
+  let marginRightNarrowScreen = 40;
+
+  let margin = {
     top: 60,
-    right: 160,
+    right: marginRightWideScreen,
     bottom: 40,
     left: 50,
   };
@@ -106,7 +110,7 @@
       // is mouse within chart but outside the coverage of the data
       let nearestYear = Math.round(xScale.invert(mousePosition.x));
       let minYear = min(data, (d) => xAccessor(d));
-      nearestYear =  nearestYear >= minYear ? nearestYear : minYear;
+      nearestYear = nearestYear >= minYear ? nearestYear : minYear;
       positionOnChart = {
         year: nearestYear,
         total_ghg_emissions: yAccessor(
@@ -117,24 +121,44 @@
       // console.log(mousePosition);
     }
   }
+
+  // -----------------------------------------------------------------------------
+  // SWITCH LAYOUT BASED ON WIDTH
+  // -----------------------------------------------------------------------------
+  $: {
+    if (width < widthThreshold) {
+      margin.right = marginRightNarrowScreen;
+    }
+    else if (width >= widthThreshold) {
+      margin.right = marginRightWideScreen;
+    }
+  }
+
+  $: console.log({width}, margin.right);
 </script>
 
 <!-- while waiting for data to load hold the space -->
 {#if data.length === 0}
+<div class="svg-container">
   <svg {width} {height} />
+</div>
   <!-- then create the chart -->
 {:else}
   <div class="chart-container" bind:clientWidth={width}>
-    <svg {width} {height}>
-      <!-- apply top and left margins -->
-      <g class="inner-chart" transform="translate({margin.left}, {margin.top})">
-        <AxisY {yScale} {xScale} width={innerWidth} {hoveredEvent} />
+    <div class="svg-container">
+      <svg {width} {height}>
+        <!-- apply top and left margins -->
+        <g
+          class="inner-chart"
+          transform="translate({margin.left}, {margin.top})"
+        >
+          <AxisY {yScale} {xScale} width={innerWidth} {hoveredEvent} />
 
-        {#if !hoveredEvent}
-          <AxisX {xScale} height={innerHeight} width={innerWidth} />
-        {/if}
+          {#if !hoveredEvent}
+            <AxisX {xScale} height={innerHeight} width={innerWidth} />
+          {/if}
 
-        <!-- {#each data as d}
+          <!-- {#each data as d}
           <circle
             cx={xScale(xAccessor(d))}
             cy={yScale(yAccessor(d))}
@@ -145,59 +169,70 @@
           />
         {/each} -->
 
-        <Line {xScale} {yScale} {xAccessor} {yAccessor} {data} {hoveredEvent} />
-
-        {#if hoveredEvent}
-          <Tooltip
-            {positionOnChart}
+          <Line
             {xScale}
             {yScale}
-            {data}
             {xAccessor}
             {yAccessor}
+            {data}
+            {hoveredEvent}
+          />
+
+          {#if hoveredEvent}
+            <Tooltip
+              {positionOnChart}
+              {xScale}
+              {yScale}
+              {data}
+              {xAccessor}
+              {yAccessor}
+              width={innerWidth}
+              height={innerHeight}
+            />
+          {/if}
+
+          <!-- svelte-ignore a11y-no-static-element-interactions -->
+          <!-- Event listener layer -->
+          <rect
+            x={0}
+            y={0}
             width={innerWidth}
             height={innerHeight}
+            fill="transparent"
+            on:mouseover={(e) => (hoveredEvent = e)}
+            on:mousemove={(e) => (hoveredEvent = e)}
+            on:mouseleave={() => (hoveredEvent = null)}
+            on:mouseout={() => {
+              hoveredEvent = null;
+            }}
           />
-        {/if}
-
-        <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <!-- Event listener layer -->
-        <rect
-          x={0}
-          y={0}
-          width={innerWidth}
-          height={innerHeight}
-          fill="transparent"
-          on:mouseover={(e) => (hoveredEvent = e)}
-          on:mousemove={(e) => (hoveredEvent = e)}
-          on:mouseleave={() => (hoveredEvent = null)}
-          on:mouseout={() => {
-            hoveredEvent = null;
-          }}
+        </g>
+      </svg>
+    </div>
+    <div class = "annotation-container">
+      {#if hoveredEvent}
+        <!-- {#if true} -->
+        <Annotation
+          {data}
+          {xScale}
+          {yScale}
+          {xAccessor}
+          {yAccessor}
+          {margin}
+          {positionOnChart}
+          {width}
+          {widthThreshold}
         />
-      </g>
-    </svg>
-    {#if hoveredEvent}
-    <!-- {#if true} -->
-      <Annotation
-        {data}
-        {xScale}
-        {yScale}
-        {xAccessor}
-        {yAccessor}
-        {margin}
-        {positionOnChart}
-      />
-    {/if}
+      {/if}
+    </div>
   </div>
 {/if}
 
 <p>Line Chart</p>
 
 <style>
-
   /* SAME FONT AND COLOR - axis labels, tooltip axis references, axis tick labels */
-  :global(.axis-label, .tick text, .tt-reference-text, .annotation, .units){
+  :global(.axis-label, .tick text, .tt-reference-text, .annotation, .units) {
     font-family: "Lato", sans-serif;
     fill: hsla(178, 16%, 13%, 1);
   }
@@ -208,7 +243,7 @@
     font-size: 14px; /* How big our text is */
   }
 
-  :global(.tt-reference-text){
+  :global(.tt-reference-text) {
     font-size: 16px;
     font-weight: 700;
   }
@@ -216,5 +251,13 @@
   .chart-container {
     max-width: 1000px;
     position: relative;
+  }
+
+  .svg-container {
+    z-index: -1;
+  }
+
+  .annotation-container {
+    z-index: -1;
   }
 </style>
