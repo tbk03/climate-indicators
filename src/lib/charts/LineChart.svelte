@@ -193,7 +193,7 @@
           <!-- svelte-ignore a11y-no-static-element-interactions -->
           <!-- Event listener layer -->
           <rect
-            id="lister-layer"
+            id="listener-layer"
             x={0}
             y={0}
             width={innerWidth}
@@ -260,7 +260,7 @@
     position: relative;
   }
 
-  #lister-layer:focus {
+  #listener-layer:focus {
     outline: none;
   }
 
