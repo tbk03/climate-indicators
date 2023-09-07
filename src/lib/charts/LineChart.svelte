@@ -193,6 +193,7 @@
           <!-- svelte-ignore a11y-no-static-element-interactions -->
           <!-- Event listener layer -->
           <rect
+            id="lister-layer"
             x={0}
             y={0}
             width={innerWidth}
@@ -259,7 +260,7 @@
     position: relative;
   }
 
-  .chart-container:focus {
+  #lister-layer:focus {
     outline: none;
   }
 
