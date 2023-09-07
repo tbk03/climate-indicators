@@ -200,9 +200,16 @@
             height={innerHeight}
             fill="transparent"
             on:mouseover={(e) => (hoveredEvent = e)}
+            on:focus={(e) => (hoveredEvent = e)}
             on:mousemove={(e) => (hoveredEvent = e)}
             on:mouseleave={() => (hoveredEvent = null)}
             on:mouseout={() => {
+              hoveredEvent = null;
+            }}
+            on:blur={() => {
+              hoveredEvent = null;
+            }}
+            on:touchend={() => {
               hoveredEvent = null;
             }}
           />

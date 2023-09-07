@@ -21,7 +21,7 @@
   export let width;
   export let height;
 
-  console.log({width, height});
+  console.log({ width, height });
 
   // -----------------------------------------------------------------------------
   // SELECTING A DATAPOINT
@@ -172,7 +172,6 @@
     .x((d) => xScale(xAccessor(d)))
     .y0(yScale(0))
     .y1((d) => yScale(yAccessor(d)))(data);
-
 </script>
 
 <!-- TOOLTIP GROUP -->
@@ -191,7 +190,7 @@
     {/each}
   </g>
 
-    <!-- Text labels for crosshairs -->
+  <!-- Text labels for crosshairs -->
   <g class="text-labels">
     {#each textLabels as tl}
       {#if tl.visible}
@@ -212,8 +211,8 @@
   </g>
 
   <!-- {#if showArrow} -->
-    <!-- transition need to be repeated within the if to apply -->
-    <!-- <g transition:fade={{ duration: transitionDuration, easing: cubicIn }}>
+  <!-- transition need to be repeated within the if to apply -->
+  <!-- <g transition:fade={{ duration: transitionDuration, easing: cubicIn }}>
       <Arrow
         x1={xScale(2021) + 18}
         y1={$nearestDataY}
@@ -228,7 +227,6 @@
   <path
     class="area"
     d={areaGen}
-    
     fill="url(#tt-area-gradient)"
     stroke="#C94A54"
     stroke-width={3}
@@ -238,7 +236,7 @@
   <!-- CIRCLES -->
   <g class="circles">
     {#each circles as c}
-      <circle cx={c.cx} cy={c.cy} r={6}/>
+      <circle cx={c.cx} cy={c.cy} r={6} />
     {/each}
   </g>
 </g>
@@ -248,12 +246,12 @@
     <rect x="0" y="0" {width} {height} fill="white" />
 
     <!-- vertical mask -->
-    <rect x={0} y={0} width={$nearestDataX} height={height} fill="black" />
+    <rect x={0} y={0} width={$nearestDataX} {height} fill="black" />
     <!-- horizontal mask -->
     <!-- orginally height={height-$nearestDataY} -->
     <!-- but this caused issues when exiting quickly on the right of the chart -->
     <!-- in that case the mask was the wrong shape -->
-    <rect x={0} y={$nearestDataY} width={width} height={height} fill="black" />
+    <rect x={0} y={$nearestDataY} {width} {height} fill="black" />
   </mask>
 
   <linearGradient id="tt-area-gradient" x1="0" x2="0" y1="0" y2="1">

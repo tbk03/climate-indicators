@@ -19,7 +19,7 @@
 
 <g class="axis-y">
   <text class="axis-label" y="-20">
-    <tspan class="axis-label-variable">ANNUAL GLOBAL CARBON EMISSIONS</tspan>
+    <tspan class="axis-label-variable">ANNUAL GREENHOUSE GAS EMISSIONS</tspan>
   </text>
   <text y="0">
     <tspan class="units">Gt CO</tspan><tspan dy="0.2em" font-size=".6em"
