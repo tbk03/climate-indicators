@@ -37,7 +37,7 @@
         stroke={index === 0 ? "#757373" : "#E7E5E4"}
         class="y-grid"
       />
-      {#if !hoveredEvent}
+      {#if !hoveredEvent || index === 0}
         <text
           class="axis-tick-label"
           x="-20"
