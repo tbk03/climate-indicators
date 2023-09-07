@@ -128,20 +128,19 @@
   $: {
     if (width < widthThreshold) {
       margin.right = marginRightNarrowScreen;
-    }
-    else if (width >= widthThreshold) {
+    } else if (width >= widthThreshold) {
       margin.right = marginRightWideScreen;
     }
   }
 
-  $: console.log({width}, margin.right);
+  $: console.log({ width }, margin.right);
 </script>
 
 <!-- while waiting for data to load hold the space -->
 {#if data.length === 0}
-<div class="svg-container">
-  <svg {width} {height} />
-</div>
+  <div class="svg-container">
+    <svg {width} {height} />
+  </div>
   <!-- then create the chart -->
 {:else}
   <div class="chart-container" bind:clientWidth={width}>
@@ -216,7 +215,7 @@
         </g>
       </svg>
     </div>
-    <div class = "annotation-container">
+    <div class="annotation-container">
       {#if hoveredEvent}
         <!-- {#if true} -->
         <Annotation
@@ -258,6 +257,10 @@
   .chart-container {
     max-width: 1000px;
     position: relative;
+  }
+
+  .chart-container:focus {
+    outline: none;
   }
 
   .svg-container {
