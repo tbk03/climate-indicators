@@ -6,8 +6,8 @@
 
   // DATA WRANGLING
   import { tidy, mutate, filter } from "@tidyjs/tidy";
-  // import { extent, max, min } from "d3-array";
   import { csv } from "d3-fetch";
+  import Treemap from "./lib/charts/Treemap.svelte";
 
   // --------------------------------------------------------------
   // UPDATE NUMBER OF UNIT CELLS WHICH ARE FILLED
@@ -63,6 +63,7 @@
     <SlopeChart {year} /> -->
     <div>hello</div>
     <LineChart {data}/>
+    <Treemap {data}/>
   </section>
 </main>
 
