@@ -1,12 +1,11 @@
 <script>
+  export let data;
   // D3
-  import { csv } from "d3-fetch";
   import { scaleLinear } from "d3-scale";
-  import { extent, max, min } from "d3-array";
+  import { max, min } from "d3-array";
 
   // tidy-js
-  import { tidy, mutate, filter } from "@tidyjs/tidy";
-  import AxisX from "../components/AxisX.svelte";
+    import AxisX from "../components/AxisX.svelte";
   import AxisY from "../components/AxisY.svelte";
   import Line from "../components/Line.svelte";
   import Tooltip from "../components/Tooltip.svelte";
@@ -16,45 +15,7 @@
   import "@fontsource/lato/400.css";
   import "@fontsource/lato/700.css";
 
-  // -----------------------------------------------------------------------------
-  // IMPORT AND CLEAN DATA FROM
-  // -----------------------------------------------------------------------------
-
-  let data = [];
-  loadData();
-
-  // LOAD FROM GITHUB
-  async function loadData() {
-    const response = await csv(
-      "https://raw.githubusercontent.com/ClimateIndicator/GHG-Emissions-Assessment/main/results/ghg_emissions_co2e.csv"
-    );
-    data = await processData(response);
-  }
-
-  // CLEAN DATA USING tidy.js
-  async function processData(data) {
-    const processed = tidy(
-      data,
-      // data quality poor before 1959
-      // @ts-ignore
-      filter((d) => d.year >= 1959),
-      mutate({
-        // convert strings to numbers
-        // @ts-ignore
-        year: (d) => +d.year,
-        "F-gases": (d) => +d["F-gases"],
-        N2O: (d) => +d["N2O"],
-        CH4: (d) => +d["CH4"],
-        "CO2-LULUCF": (d) => +d["CO2-LULUCF"],
-        "CO2-FFI": (d) => +d["CO2-FFI"],
-
-        // calculate total emmission each year
-        total_ghg_emissions: (d) =>
-          d["F-gases"] + d["N2O"] + d["CH4"] + d["CO2-LULUCF"] + d["CO2-FFI"],
-      })
-    );
-    return processed;
-  }
+  
 
   // -----------------------------------------------------------------------------
   // DIMENSIONS AND LAYOUT
