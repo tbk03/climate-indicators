@@ -86,22 +86,24 @@
   const totalAccessor = (d) => (d ? d.total_ghg_emissions : undefined);
   const growthAccessor = (d) => (d ? d.change_em_years_ago_1 : undefined);
 
-  const transitionDuration = 200;
+  const calcSquareDim = (d) => Math.round(Math.sqrt(areaScale(d)));
+
+  const transitionDuration = 500;
   const tweenedTransition = {
     duration: transitionDuration,
     easing: cubicOut,
   };
 
   // tweened coordinates in pixels
-  let year1OuterDim = tweened(year1, tweenedTransition);
-  let year1InnerDim = tweened(year1, tweenedTransition);
+  let year1OuterDim = tweened(maxRectWidth, tweenedTransition);
+  let year1InnerDim = tweened(maxRectWidth, tweenedTransition);
 
   let emissionsYear1, growthYear1;
 
   $: if (data.length > 0) {
     // OUTER SQUARE - TOTAL EMISSIONS
     emissionsYear1 = totalAccessor(selectedData.find((d) => d.year == year1));
-    year1OuterDim.set(Math.round(Math.sqrt(areaScale(emissionsYear1))));
+    year1OuterDim.set(calcSquareDim(emissionsYear1));
 
     // OUTER SQUARE - GROWTH IN EMISSIONS
     growthYear1 = growthAccessor(selectedData.find((d) => d.year == year1));
@@ -116,25 +118,35 @@
 
   // let sliderYear;
   // $: console.log({sliderYear});
-
+  $: console.log({ year1 });
 </script>
 
 <div>Treemap</div>
-<div>
-  <input
-    type="range"
-    id="year"
-    name="year"
-    min={min(processedData, (d) => d.year)}
-    max={max(processedData, (d) => d.year)}
-    step="1"
-    bind:value={year1}
-  />
-  <label for="year">Year</label>
-  <div>{year1}</div>
-</div>
+
+<!-- to fix issue with incorrect initial slide value display while data is loading -->
+{#if data.length > 0}
+  <div>
+    <input
+      type="range"
+      id="year"
+      name="year"
+      min={min(processedData, (d) => d.year)}
+      max={max(processedData, (d) => d.year)}
+      step="1"
+      bind:value={year1}
+    />
+    <label for="year">Year</label>
+    <div>{year1}</div>
+  </div>
+{/if}
 
 <svg width="600" height="400">
   <rect x="0" y="0" width={$year1OuterDim} height={$year1OuterDim} />
-  <rect x="0" y="0" width={$year1InnerDim} height={$year1InnerDim} fill="white" />
+  <rect
+    x="0"
+    y="0"
+    width={$year1InnerDim}
+    height={$year1InnerDim}
+    fill="white"
+  />
 </svg>
