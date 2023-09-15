@@ -9,14 +9,19 @@
   import { scaleLinear } from "d3-scale";
   import { scale } from "svelte/transition";
 
-  //   $: console.log(data);
+  // SVELTE
+  import { tweened } from "svelte/motion";
+  import { cubicOut, cubicIn } from "svelte/easing";
+  import { fade } from "svelte/transition";
+
+  $: console.log({ data });
 
   // -----------------------------------------------------------------------------
   // DATA WRANGLING
   // -----------------------------------------------------------------------------
   let processedData;
   let years_ago_1 = 10;
-  let years_ago_2 = 5;
+  // let years_ago_2 = 5;
 
   $: {
     processedData = tidy(
@@ -27,23 +32,23 @@
         total_ghg_emissions_years_ago_1: lag("total_ghg_emissions", {
           n: years_ago_1,
         }),
-        total_ghg_emissions_years_ago_2: lag("total_ghg_emissions", {
-          n: years_ago_2,
-        }),
+        // total_ghg_emissions_years_ago_2: lag("total_ghg_emissions", {
+        //   n: years_ago_2,
+        // }),
       }),
 
       // comparisions can't be made where data does not go far back enough
       filter((d) => d.total_ghg_emissions_years_ago_1 !== undefined),
-      filter((d) => d.total_ghg_emissions_years_ago_2 !== undefined),
+      // filter((d) => d.total_ghg_emissions_years_ago_2 !== undefined),
 
       // calculate change in emissions based on selected year
       mutate({
         change_em_years_ago_1: (d) =>
           // @ts-ignore
           d.total_ghg_emissions - d.total_ghg_emissions_years_ago_1,
-        change_em_years_ago_2: (d) =>
-          // @ts-ignore
-          d.total_ghg_emissions - d.total_ghg_emissions_years_ago_2,
+        // change_em_years_ago_2: (d) =>
+        //   // @ts-ignore
+        //   d.total_ghg_emissions - d.total_ghg_emissions_years_ago_2,
       })
     );
   }
@@ -53,11 +58,11 @@
   // -----------------------------------------------------------------------------
   // SELECTED YEARS
   // -----------------------------------------------------------------------------
-  const year1 = 2019;
-  const year2 = 1981;
+  let year1 = 2019;
+  // const year2 = 1981;
 
   $: selectedData = processedData.filter(
-    (d) => d.year === year1 || d.year === year2
+    (d) => d.year === year1 //|| d.year === year2
   );
 
   $: console.log({ selectedData });
@@ -76,15 +81,60 @@
   // -----------------------------------------------------------------------------
   // RECTANGLE DIMENSIONS
   // -----------------------------------------------------------------------------
-  const heightRect1Year1 = 400;
-  const areaAccessor = (d) => d.total_ghg_emissions;
+  // let year1OuterDim;
 
-  $: emissionsYear1 = areaAccessor(selectedData.find(d => d.year == year1));
-  $: widthRect1Year1 = areaScale(emissionsYear1) / heightRect1Year1;
-  $: console.log({widthRect1Year1});
+  const totalAccessor = (d) => (d ? d.total_ghg_emissions : undefined);
+  const growthAccessor = (d) => (d ? d.change_em_years_ago_1 : undefined);
+
+  const transitionDuration = 200;
+  const tweenedTransition = {
+    duration: transitionDuration,
+    easing: cubicOut,
+  };
+
+  // tweened coordinates in pixels
+  let year1OuterDim = tweened(year1, tweenedTransition);
+  let year1InnerDim = tweened(year1, tweenedTransition);
+
+  let emissionsYear1, growthYear1;
+
+  $: if (data.length > 0) {
+    // OUTER SQUARE - TOTAL EMISSIONS
+    emissionsYear1 = totalAccessor(selectedData.find((d) => d.year == year1));
+    year1OuterDim.set(Math.round(Math.sqrt(areaScale(emissionsYear1))));
+
+    // OUTER SQUARE - GROWTH IN EMISSIONS
+    growthYear1 = growthAccessor(selectedData.find((d) => d.year == year1));
+    year1InnerDim.set(Math.round(Math.sqrt(areaScale(growthYear1))));
+
+    console.log({ year1InnerDim });
+  }
+
+  // -----------------------------------------------------------------------------
+  // INTERACTION
+  // -----------------------------------------------------------------------------
+
+  // let sliderYear;
+  // $: console.log({sliderYear});
+
 </script>
 
 <div>Treemap</div>
+<div>
+  <input
+    type="range"
+    id="year"
+    name="year"
+    min={min(processedData, (d) => d.year)}
+    max={max(processedData, (d) => d.year)}
+    step="1"
+    bind:value={year1}
+  />
+  <label for="year">Year</label>
+  <div>{year1}</div>
+</div>
+
 <svg width="600" height="400">
-  <rect x="0" y="0" width={widthRect1Year1} height={heightRect1Year1} />
+  <rect x="0" y="0" width={$year1OuterDim} height={$year1OuterDim} />
+  <rect x="0" y="0" width={$year1InnerDim} height={$year1InnerDim} fill="white" />
 </svg>
