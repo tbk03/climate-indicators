@@ -11,7 +11,13 @@
     addRows,
   } from "@tidyjs/tidy";
   import { max, min } from "d3-array";
-  import { stratify, treemap, treemapBinary, hierarchy } from "d3-hierarchy";
+  import {
+    stratify,
+    treemap,
+    treemapBinary,
+    treemapSquarify,
+    hierarchy,
+  } from "d3-hierarchy";
 
   // encoding data to visual parameters
   import { scaleLinear } from "d3-scale";
@@ -53,10 +59,6 @@
         change_em_years_ago_1: (d) =>
           // @ts-ignore
           d.total_ghg_emissions - d.total_ghg_emissions_years_ago_1,
-
-        // required for creating tree data structure
-        decade: (d) => `${d.year - (d.year % 10)}`,
-        parent: (d) => "whole",
       })
     );
   }
@@ -67,33 +69,57 @@
   // FORMAT DATA FOR D3 TREEMAP
   // -----------------------------------------------------------------------------
 
+  // prepare to format data
   let stratifyData = stratify()
-    .id((d) => d.decade)
-    .parentId((d) => d.parent);
+    .id((d) => d.id)
+    .parentId((d) => d.timePeriod);
 
-  let processedDataTree;
   $: stratifyInput = tidy(
     processedData,
     // @ts-ignore
     filter((d) => d.year % 10 === 0),
-    addRows({ decade: "whole", parent: "" })
+
+    addRows(data.find((d) => d.year === 1960)),
+
+    mutate({
+      id: (d) => `${d.year - (d.year % 10)}`,
+      timePeriod: (d) =>
+        d.year >= 2000 ? "late" : d.year > 1960 ? "mid" : "early",
+      emissionsContribution: (d) =>
+        d.year === 1960 ? d.total_ghg_emissions : d.change_em_years_ago_1,
+    }),
+
+    addRows([
+      // create parents
+      { id: "whole", timePeriod: "" },
+      { id: "mid", timePeriod: "whole" },
+      { id: "late", timePeriod: "whole" },
+      { id: "early", timePeriod: "whole" },
+    ])
   );
 
+  $: console.log({ stratifyInput });
+
+  // format the data
+  let processedDataTree; // referred to as root in D3 in general
   $: if (stratifyData) {
-    processedDataTree = stratifyData(stratifyInput).sum((d) => d.total_ghg_emissions);
+    processedDataTree = stratifyData(stratifyInput);
+
+    // calcuate area of parent rectangles
+    processedDataTree.sum((d) => d.emissionsContribution);
   }
   $: console.log({ processedDataTree });
-
+  $: console.log({ leaves: processedDataTree.leaves() });
 
   // -----------------------------------------------------------------------------
   // CALCULATE LAYOUT FOR D3 TREEMAP
   // -----------------------------------------------------------------------------
   // see https://tonydang.blog/d3-svelte-treemap/ for more details
-  $: layout = treemap()
-    .tile(treemapBinary)
-    .size([400, 400])
-    .padding(1)
-    .round(true)(processedDataTree);
+
+  // apply layout to the processed data tree
+  $: treemap().tile(treemapBinary).size([400, 400]).padding(0).round(true)(
+    processedDataTree
+  );
 
   $: console.log(processedDataTree);
 
@@ -174,7 +200,6 @@
 
 <!-- to fix issue with incorrect initial slide value display while data is loading -->
 
-
 <div>
   <svg width="400" height="400">
     {#each processedDataTree.leaves() as leaf, leafIndex}
@@ -186,6 +211,9 @@
         fill="none"
         stroke="black"
       />
+      <text x={(leaf.x1 + leaf.x0) / 2} y={(leaf.y1 + leaf.y0) / 2}>
+        {+leaf.id - 10}
+      </text>
     {/each}
   </svg>
 </div>
