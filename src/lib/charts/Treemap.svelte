@@ -70,8 +70,8 @@
   // -----------------------------------------------------------------------------
   // SCALES
   // -----------------------------------------------------------------------------
-  const maxRectWidth = 400;
-  const maxRectHeight = 400;
+  const maxRectWidth = 200;
+  const maxRectHeight = 200;
   $: maxEmissons = max(processedData, (d) => d.total_ghg_emissions);
 
   $: areaScale = scaleLinear()
@@ -150,3 +150,17 @@
     fill="white"
   />
 </svg>
+
+<div>
+  <svg width={maxRectWidth} height={maxRectHeight}>
+    {#each data.filter(d => d.year % 10 === 0) as d}
+    <rect 
+      x="0"
+      y="0"
+      width={calcSquareDim(totalAccessor(d))}
+      height={calcSquareDim(totalAccessor(d))}
+      fill="none"
+      stroke="black" />
+    {/each}
+  </svg>
+</div>

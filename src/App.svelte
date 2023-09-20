@@ -62,7 +62,7 @@
     <WaffleChart numFilledCells={percGHGBudget} {year} />
     <SlopeChart {year} /> -->
     <div>hello</div>
-    <LineChart {data}/>
+    <!-- <LineChart {data}/> -->
     <Treemap {data}/>
   </section>
 </main>
