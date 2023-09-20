@@ -2,8 +2,16 @@
   export let data;
 
   // data wrangling
-  import { tidy, mutate, filter, lag, mutateWithSummary } from "@tidyjs/tidy";
+  import {
+    tidy,
+    mutate,
+    filter,
+    lag,
+    mutateWithSummary,
+    addRows,
+  } from "@tidyjs/tidy";
   import { max, min } from "d3-array";
+  import { stratify } from "d3-hierarchy";
 
   // encoding data to visual parameters
   import { scaleLinear } from "d3-scale";
@@ -17,7 +25,7 @@
   $: console.log({ data });
 
   // -----------------------------------------------------------------------------
-  // DATA WRANGLING
+  // DATA CLEANING
   // -----------------------------------------------------------------------------
   let processedData;
   let years_ago_1 = 10;
@@ -39,21 +47,42 @@
 
       // comparisions can't be made where data does not go far back enough
       filter((d) => d.total_ghg_emissions_years_ago_1 !== undefined),
-      // filter((d) => d.total_ghg_emissions_years_ago_2 !== undefined),
 
-      // calculate change in emissions based on selected year
       mutate({
+        // calculate change in emissions based on selected year
         change_em_years_ago_1: (d) =>
           // @ts-ignore
           d.total_ghg_emissions - d.total_ghg_emissions_years_ago_1,
-        // change_em_years_ago_2: (d) =>
-        //   // @ts-ignore
-        //   d.total_ghg_emissions - d.total_ghg_emissions_years_ago_2,
+
+        // required for creating tree data structure
+        decade: (d) => `${d.year - (d.year % 10)}`,
+        parent: (d) => "whole",
       })
     );
   }
 
   $: console.log({ processedData });
+
+  // -----------------------------------------------------------------------------
+  // FORMAT DATA FOR D3 TREEMAP
+  // -----------------------------------------------------------------------------
+
+  let stratifyData = stratify()
+    .id((d) => d.decade)
+    .parentId((d) => d.parent);
+
+  let processedDataTree;
+  $: stratifyInput = tidy(
+    processedData,
+    // @ts-ignore
+    filter((d) => d.year % 10 === 0),
+    addRows({ decade: "whole", parent: "" })
+  );
+
+  $: if (stratifyData) {
+    processedDataTree = stratifyData(stratifyInput);
+  }
+  $: console.log({ processedDataTree });
 
   // -----------------------------------------------------------------------------
   // SELECTED YEARS
@@ -153,14 +182,15 @@
 
 <div>
   <svg width={maxRectWidth} height={maxRectHeight}>
-    {#each data.filter(d => d.year % 10 === 0) as d}
-    <rect 
-      x="0"
-      y="0"
-      width={calcSquareDim(totalAccessor(d))}
-      height={calcSquareDim(totalAccessor(d))}
-      fill="none"
-      stroke="black" />
+    {#each data.filter((d) => d.year % 10 === 0) as d}
+      <rect
+        x="0"
+        y="0"
+        width={calcSquareDim(totalAccessor(d))}
+        height={calcSquareDim(totalAccessor(d))}
+        fill="none"
+        stroke="black"
+      />
     {/each}
   </svg>
 </div>
