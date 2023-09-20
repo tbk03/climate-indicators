@@ -11,7 +11,7 @@
     addRows,
   } from "@tidyjs/tidy";
   import { max, min } from "d3-array";
-  import { stratify } from "d3-hierarchy";
+  import { stratify, treemap, treemapBinary, hierarchy } from "d3-hierarchy";
 
   // encoding data to visual parameters
   import { scaleLinear } from "d3-scale";
@@ -22,7 +22,7 @@
   import { cubicOut, cubicIn } from "svelte/easing";
   import { fade } from "svelte/transition";
 
-  $: console.log({ data });
+  // $: console.log({ data });
 
   // -----------------------------------------------------------------------------
   // DATA CLEANING
@@ -80,9 +80,29 @@
   );
 
   $: if (stratifyData) {
-    processedDataTree = stratifyData(stratifyInput);
+    processedDataTree = stratifyData(stratifyInput).sum((d) => d.total_ghg_emissions);
   }
   $: console.log({ processedDataTree });
+
+
+  // -----------------------------------------------------------------------------
+  // CALCULATE LAYOUT FOR D3 TREEMAP
+  // -----------------------------------------------------------------------------
+  // see https://tonydang.blog/d3-svelte-treemap/ for more details
+  $: layout = treemap()
+    .tile(treemapBinary)
+    .size([400, 400])
+    .padding(1)
+    .round(true)(processedDataTree);
+
+  $: console.log(processedDataTree);
+
+  // $: dataHierarchy = hierarchy(processedDataTree)
+  //     .sum((d) => d.total_ghg_emissions)
+  //     .sort((a, b) => b.total_ghg_emissions - a.total_ghg_emissions)
+  // $: layout = root(dataHierarchy);
+
+  // $: console.log({processedDataTree});
 
   // -----------------------------------------------------------------------------
   // SELECTED YEARS
@@ -94,7 +114,7 @@
     (d) => d.year === year1 //|| d.year === year2
   );
 
-  $: console.log({ selectedData });
+  // $: console.log({ selectedData });
 
   // -----------------------------------------------------------------------------
   // SCALES
@@ -138,7 +158,7 @@
     growthYear1 = growthAccessor(selectedData.find((d) => d.year == year1));
     year1InnerDim.set(Math.round(Math.sqrt(areaScale(growthYear1))));
 
-    console.log({ year1InnerDim });
+    // console.log({ year1InnerDim });
   }
 
   // -----------------------------------------------------------------------------
@@ -147,12 +167,29 @@
 
   // let sliderYear;
   // $: console.log({sliderYear});
-  $: console.log({ year1 });
+  // $: console.log({ year1 });
 </script>
 
 <div>Treemap</div>
 
 <!-- to fix issue with incorrect initial slide value display while data is loading -->
+
+
+<div>
+  <svg width="400" height="400">
+    {#each processedDataTree.leaves() as leaf, leafIndex}
+      <rect
+        x={leaf.x0}
+        y={leaf.y0}
+        width={leaf.x1 - leaf.x0}
+        height={leaf.y1 - leaf.y0}
+        fill="none"
+        stroke="black"
+      />
+    {/each}
+  </svg>
+</div>
+
 {#if data.length > 0}
   <div>
     <input
