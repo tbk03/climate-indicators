@@ -10,7 +10,7 @@
     mutateWithSummary,
     addRows,
   } from "@tidyjs/tidy";
-  import { max, min } from "d3-array";
+  import { max, min, reverse } from "d3-array";
   import {
     stratify,
     treemap,
@@ -20,8 +20,8 @@
   } from "d3-hierarchy";
 
   // encoding data to visual parameters
-  import { scaleLinear } from "d3-scale";
-  import { scale } from "svelte/transition";
+  import { scaleLinear, scaleSequential } from "d3-scale";
+  // import { scale } from "svelte/transition";
 
   // SVELTE
   import { tweened } from "svelte/motion";
@@ -145,13 +145,20 @@
   // -----------------------------------------------------------------------------
   // SCALES
   // -----------------------------------------------------------------------------
-  const maxRectWidth = 200;
-  const maxRectHeight = 200;
+  const maxRectWidth = 800; // 200
+  const maxRectHeight = 800; // 200
   $: maxEmissons = max(processedData, (d) => d.total_ghg_emissions);
+  $: minEmissons = min(processedData, (d) => d.total_ghg_emissions);
 
   $: areaScale = scaleLinear()
     .domain([0, maxEmissons])
     .range([0, maxRectWidth * maxRectHeight]);
+
+  $: colorScale = scaleSequential()
+    .domain([minEmissons, maxEmissons])
+    // .range(["#A7BCD6", "#35469D"]); //blue square
+    .range(["#6A8EAF", "#C7C2C4"]);
+  $: console.log(colorScale(40));
 
   // -----------------------------------------------------------------------------
   // RECTANGLE DIMENSIONS
@@ -247,14 +254,19 @@
 
 <div>
   <svg width={maxRectWidth} height={maxRectHeight}>
-    {#each data.filter((d) => d.year % 10 === 0) as d}
+    <!-- {#each data.filter((d) => d.year % 10 === 0) as d} -->
+    {#each data.reverse() as d}
       <rect
-        x="0"
-        y="0"
+        x= {(maxRectWidth / 2) - (calcSquareDim(totalAccessor(d)) / 2)}
+        y= {(maxRectHeight / 2) - (calcSquareDim(totalAccessor(d)) / 2)}
         width={calcSquareDim(totalAccessor(d))}
         height={calcSquareDim(totalAccessor(d))}
+        stroke={colorScale(totalAccessor(d))}
+        stroke-width="1"
         fill="none"
-        stroke="black"
+        opacity="1"
+        rx="10"
+        ry="10"
       />
     {/each}
   </svg>
