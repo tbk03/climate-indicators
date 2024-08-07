@@ -25,7 +25,7 @@
   // LOAD FROM GITHUB
   async function loadData() {
     const response = await csv(
-      "https://raw.githubusercontent.com/ClimateIndicator/GHG-Emissions-Assessment/main/results/ghg_emissions_co2e.csv"
+      "https://raw.githubusercontent.com/ClimateIndicator/GHG-Emissions-Assessment/main/results/ghg_emissions_co2e_2023.csv"
     );
     data = await processData(response);
   }
@@ -61,9 +61,8 @@
     <!-- <YearSlider bind:sliderValue={percGHGBudget} />
     <WaffleChart numFilledCells={percGHGBudget} {year} />
     <SlopeChart {year} /> -->
-    <div>hello</div>
-    <!-- <LineChart {data}/> -->
-    <Treemap {data}/>
+    <LineChart {data}/>
+    <!-- <Treemap {data}/> -->
   </section>
 </main>
 

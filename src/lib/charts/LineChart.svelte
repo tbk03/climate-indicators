@@ -196,8 +196,6 @@
   </div>
 {/if}
 
-<p>Line Chart</p>
-
 <style>
   /* SAME FONT AND COLOR - axis labels, tooltip axis references, axis tick labels */
   :global(.axis-label, .tick text, .tt-reference-text, .annotation, .units) {
