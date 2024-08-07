@@ -25,7 +25,7 @@
   // LOAD FROM GITHUB
   async function loadData() {
     const response = await csv(
-      "https://raw.githubusercontent.com/ClimateIndicator/GHG-Emissions-Assessment/main/results/ghg_emissions_co2e_2023.csv"
+      "https://raw.githubusercontent.com/ClimateIndicator/GHG-Emissions-Assessment/main/results/ghg_emissions_co2e_2023.csv",
     );
     data = await processData(response);
   }
@@ -50,7 +50,7 @@
         // calculate total emmission each year
         total_ghg_emissions: (d) =>
           d["F-gases"] + d["N2O"] + d["CH4"] + d["CO2-LULUCF"] + d["CO2-FFI"],
-      })
+      }),
     );
     return processed;
   }
@@ -61,7 +61,7 @@
     <!-- <YearSlider bind:sliderValue={percGHGBudget} />
     <WaffleChart numFilledCells={percGHGBudget} {year} />
     <SlopeChart {year} /> -->
-    <LineChart {data}/>
+    <LineChart {data} />
     <!-- <Treemap {data}/> -->
   </section>
 </main>
@@ -74,6 +74,18 @@
 
   :global(.chart) {
     margin: 0 auto;
-    max-width: 600px;
+    /* max-width: 600px; */
+  }
+
+  .interative-section {
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+
+  @media screen and (min-width: 800px) {
+    .interative-section {
+      padding-left: 10%;
+      padding-right: 10%;
+    }
   }
 </style>

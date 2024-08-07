@@ -5,7 +5,7 @@
   import { max, min } from "d3-array";
 
   // tidy-js
-    import AxisX from "../components/AxisX.svelte";
+  import AxisX from "../components/AxisX.svelte";
   import AxisY from "../components/AxisY.svelte";
   import Line from "../components/Line.svelte";
   import Tooltip from "../components/Tooltip.svelte";
@@ -21,7 +21,7 @@
   // DIMENSIONS AND LAYOUT
   // -----------------------------------------------------------------------------
   let width = 400;
-  let height = 500;
+  let height = 450;
 
   const widthThreshold = 600;
   let marginRightWideScreen = 160;
